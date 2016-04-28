@@ -1,4 +1,4 @@
-package com.ja.ea.server.DAO;
+package com.ea.ja.server.DAO;
 
 public class Business {
 
