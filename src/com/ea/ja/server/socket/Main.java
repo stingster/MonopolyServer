@@ -6,7 +6,7 @@ package com.ea.ja.server.socket;
 public class Main {
 
     public static void main(String[] args){
-        System.out.println("mata");
+        System.out.println("test");
 
 
     }
