@@ -10,7 +10,8 @@ import java.net.Socket;
 import java.util.Vector;
 
 final class Server implements Runnable {
-
+	//comentariu adaugat de alex
+	//eu eu eu eu e
     //comentariu adaugat
     // al doilea comentariu adaugat
     private static final int MINIMUM_NUMBER_OF_CLIENTS = 2;
