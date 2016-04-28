@@ -12,6 +12,7 @@ import java.util.Vector;
 final class Server implements Runnable {
 
     //comentariu adaugat
+    // al doilea comentariu adaugat
     private static final int MINIMUM_NUMBER_OF_CLIENTS = 2;
     private static int LISTENING_PORT = 8080;
     private static int MAXIMUM_NUMBER_OF_CLIENTS = 8;
