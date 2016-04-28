@@ -12,7 +12,7 @@ public class Message implements Serializable{
 	     *
 	     * @param code integer between 0 and NaN
 	     * @param serializableObject serializable object, respecting the contract of codes
-	     * @throws InvalidRequstedCode if the requested code is invalid
+	     * @throws InvalidRequestedCode if the requested code is invalid
 	     */
 	    public Message(int code, Object serializableObject) throws InvalidRequestedCode {
 	        setCode(code);
@@ -30,7 +30,7 @@ public class Message implements Serializable{
 	    /**
 	     * setter for the code
 	     * @param code code of the message
-	     * @throws InvalidRequstedCode if the requested code is invalid
+	     * @throws InvalidRequestedCode if the requested code is invalid
 	     */
 	    private void setCode(int code) throws InvalidRequestedCode {
 	        if(code < 0)
