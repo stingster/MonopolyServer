@@ -91,7 +91,7 @@ final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < MAXIMUM_NUMBER_OF_CLIENTS && currentConnectedClients < requiredClients)
-                    if (dao.logIn(username, password) != null) {
+                    if (true) {
                         // if credentials are ok
                         currentConnectedClients++;
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
