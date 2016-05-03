@@ -11,12 +11,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
-final class Server implements Runnable {
+public final class Server implements Runnable {
 
-    private static final int MINIMUM_NUMBER_OF_CLIENTS = 2;
     private static int LISTENING_PORT = 8080;
-    private static int MAXIMUM_NUMBER_OF_CLIENTS = 8;
-    private static int requiredClients = 4;
+    private static int requiredClients = 2;
     private static int currentConnectedClients = 0;
     private static Server server = new Server();
     private static Thread thread;
@@ -45,16 +43,6 @@ final class Server implements Runnable {
     }
 
     /**
-     * sets the maximum number of clients
-     * @param maximumNumberOfClients
-     */
-    public static void setMaximumNumberOfClients(int maximumNumberOfClients) throws Exception {
-        if(maximumNumberOfClients < 2)
-            throw new Exception("Invalid maximum number of clients!");
-        MAXIMUM_NUMBER_OF_CLIENTS = maximumNumberOfClients;
-    }
-
-    /**
      * set the listening port
      * @param listeningPort
      */
@@ -75,15 +63,26 @@ final class Server implements Runnable {
      * sends the start game message
      */
     public static void startGame(){
+        System.out.println("GAME STARTED");
         for(Player player : clients)
             try {
-                player.sendMessage(MessageCodes.GAME_READY_TO_START,null);
+                player.sendMessage(MessageCodes.GAME_READY_TO_START, null);
+                player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
             } catch (InvalidRequestedCode invalidRequestedCode) {
                 invalidRequestedCode.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+    }
+
+    /**
+     * informs all player about a player location update
+     * @param username username of the user
+     * @param newPosition new position of the user
+     */
+    public static void updateUserPostion(String username, int newPosition){
+        System.out.println(username + " s-a mutat la pozitia " + newPosition);
     }
 
     /**
@@ -101,13 +100,16 @@ final class Server implements Runnable {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
-                if(currentConnectedClients < MAXIMUM_NUMBER_OF_CLIENTS && currentConnectedClients < requiredClients)
+                if(currentConnectedClients < requiredClients)
                     if (true) {
                         // if credentials are ok
                         currentConnectedClients++;
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
+                        // ID TOKEN
+                        objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID,currentConnectedClients));
                         clients.add(new Player(username,socket,objectInputStream,objectOutputStream));
                         System.out.println(username + " connected.");
+
                         if(currentConnectedClients == requiredClients)
                             startGame();
                     } else {

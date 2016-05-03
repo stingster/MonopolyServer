@@ -10,6 +10,9 @@ import java.util.List;
 import com.ea.ja.server.socket.*;
 
 import com.ea.ja.server.socket.InvalidRequestedCode;
+import com.ea.ja.server.socket.*;
+import com.ea.ja.server.socket.Server;
+import com.sun.corba.se.spi.activation.*;
 
 public class Player implements Runnable{
 
@@ -161,8 +164,11 @@ public class Player implements Runnable{
         Message resp;
         try {
             while ((resp = (Message) objectInputStream.readObject()) != null) {
-                System.out.println(username + ": " + resp.getSerializableObject());
-            }
+				if(resp.getMessageCodes() == MessageCodes.USER_POSITION){
+					setPosition((Integer)resp.getSerializableObject());
+					Server.updateUserPostion(getUsername(),getPosition());
+				}
+			}
         }catch (SocketException e){
             System.out.println(username + " disconnected.");
 

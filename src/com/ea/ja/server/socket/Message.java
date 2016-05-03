@@ -12,7 +12,7 @@ public class Message implements Serializable{
         return messageCodes;
     }
 
-    public void setMessageCodes(MessageCodes messageCodes) {
+    private void setMessageCodes(MessageCodes messageCodes) {
         this.messageCodes = messageCodes;
     }
 
