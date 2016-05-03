@@ -69,7 +69,7 @@ public class DAOImpl implements DAO {
 			while (resultSet.next()) {
 					Player player = new Player(username, password);
 					player.setPosition(resultSet.getInt("position"));
-					player.setToken(resultSet.getString("token"));
+//					player.setToken(resultSet.getString("token"));
 					player.setMoney(resultSet.getInt("money"));
 					return player;
 			}
@@ -129,7 +129,7 @@ public class DAOImpl implements DAO {
 				
 				Player player = new Player(resultSet.getString("username"));
 				player.setPosition(resultSet.getInt("position"));
-				player.setToken(resultSet.getString("token"));
+//				player.setToken(resultSet.getString("token"));
 				player.setMoney(resultSet.getInt("money"));
 				return player;
 				
