@@ -1,5 +1,7 @@
 package com.ea.ja.server.socket;
 
+import com.ea.ja.server.DAO.DAO;
+import com.ea.ja.server.DAO.DAOImpl;
 import com.ea.ja.server.domain.Player;
 
 import java.io.IOException;
@@ -20,6 +22,7 @@ final class Server implements Runnable {
     private static Thread thread;
     private static boolean isRunning;
     private static Vector<Player> clients = new Vector<>();
+    private static DAO dao;
     /**
      * private constructor
      * singleton pattern
@@ -77,6 +80,9 @@ final class Server implements Runnable {
      */
     @Override
     public void run() {
+
+        dao = new DAOImpl();
+
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             while (isRunning) {
@@ -87,7 +93,7 @@ final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < MAXIMUM_NUMBER_OF_CLIENTS && currentConnectedClients < requiredClients)
-                    if (true) {
+                    if (dao.logIn(username, password) != null) {
                         // if credentials are ok
                         currentConnectedClients++;
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
