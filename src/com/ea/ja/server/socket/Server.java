@@ -7,6 +7,7 @@ import com.ea.ja.server.domain.Player;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
@@ -21,6 +22,8 @@ public final class Server implements Runnable {
     private static boolean isRunning;
     private static Vector<Player> clients = new Vector<>();
     private static DAO dao;
+    private static Vector<SerializablePlayer> serializablePlayers = new Vector<>();
+
     /**
      * private constructor
      * singleton pattern
@@ -60,14 +63,25 @@ public final class Server implements Runnable {
     }
 
     /**
+     * generates serializabel player vector
+     */
+    private static void generateSerializablePlayerVector(){
+        for(Player player : clients)
+            serializablePlayers.add(new SerializablePlayer(player.getUsername(),player.getToken()));
+        System.out.println("SerializablePlayer vector generated!");
+    }
+
+    /**
      * sends the start game message
      */
     public static void startGame(){
         System.out.println("GAME STARTED");
         for(Player player : clients)
             try {
-                player.sendMessage(MessageCodes.GAME_READY_TO_START, null);
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
+                generateSerializablePlayerVector();
+                player.sendMessage(MessageCodes.CONECTED_USERS_VECTOR,serializablePlayers);
+                player.sendMessage(MessageCodes.GAME_READY_TO_START, null);
             } catch (InvalidRequestedCode invalidRequestedCode) {
                 invalidRequestedCode.printStackTrace();
             } catch (IOException e) {
@@ -91,8 +105,6 @@ public final class Server implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
     }
 
     /**

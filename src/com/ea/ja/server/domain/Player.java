@@ -19,7 +19,7 @@ public class Player implements Runnable{
 	private String username;
 	private String password;
 	private int position;
-	private String token;
+	private int token;
 	private int money;
 	private List<Commodity> commodities = new ArrayList<>();
 	private boolean isLogged;
@@ -94,11 +94,11 @@ public class Player implements Runnable{
 		this.isLogged = isLogged;
 	}
 
-	public String getToken() {
+	public int getToken() {
 		return token;
 	}
 
-	public void setToken(String token) {
+	public void setToken(int token) {
 		this.token = token;
 	}
 
@@ -112,7 +112,7 @@ public class Player implements Runnable{
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + position;
-		result = prime * result + ((token == null) ? 0 : token.hashCode());
+//		result = prime * result + ((token == null) ? 0 : token.hashCode());
 		return result;
 	}
 
@@ -146,11 +146,11 @@ public class Player implements Runnable{
 			return false;
 		if (position != other.position)
 			return false;
-		if (token == null) {
-			if (other.token != null)
-				return false;
-		} else if (!token.equals(other.token))
-			return false;
+//		if (token == null) {
+//			if (other.token != null)
+//				return false;
+//		} else if (!token.equals(other.token))
+//			return false;
 		return true;
 	}
 	
