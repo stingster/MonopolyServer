@@ -83,6 +83,14 @@ public final class Server implements Runnable {
      */
     public static void updateUserPostion(String username, int newPosition){
         System.out.println(username + " s-a mutat la pozitia " + newPosition);
+        for(Player player : clients)
+            try {
+                player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username,newPosition));
+            } catch (InvalidRequestedCode invalidRequestedCode) {
+                invalidRequestedCode.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
 
     }
