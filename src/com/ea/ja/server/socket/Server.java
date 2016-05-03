@@ -84,6 +84,7 @@ public final class Server implements Runnable {
     public static void updateUserPostion(String username, int newPosition){
         System.out.println(username + " s-a mutat la pozitia " + newPosition);
 
+
     }
 
     /**
