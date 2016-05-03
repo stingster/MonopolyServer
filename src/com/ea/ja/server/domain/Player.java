@@ -151,7 +151,7 @@ public class Player implements Runnable{
 		return true;
 	}
 	
-    private void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
+    public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(code, serializedObject));
     }
 

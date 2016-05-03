@@ -71,7 +71,18 @@ final class Server implements Runnable {
         isRunning = false;
     }
 
+    /**
+     * sends the start game message
+     */
     public static void startGame(){
+        for(Player player : clients)
+            try {
+                player.sendMessage(MessageCodes.GAME_READY_TO_START,null);
+            } catch (InvalidRequestedCode invalidRequestedCode) {
+                invalidRequestedCode.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
     }
 
