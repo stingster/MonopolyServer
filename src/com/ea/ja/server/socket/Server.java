@@ -80,9 +80,7 @@ final class Server implements Runnable {
      */
     @Override
     public void run() {
-
         dao = new DAOImpl();
-
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             while (isRunning) {
