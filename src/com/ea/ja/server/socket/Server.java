@@ -23,6 +23,7 @@ public final class Server implements Runnable {
     private static Vector<Player> clients = new Vector<>();
     private static DAO dao;
     private static Vector<SerializablePlayer> serializablePlayers = new Vector<>();
+    private static int indexOfTheCurrentPlayerTurn;
 
     /**
      * private constructor
@@ -72,21 +73,47 @@ public final class Server implements Runnable {
     }
 
     /**
+     * gives permission to turn to next player
+     */
+    public static void nextPlayerTurn(){
+        indexOfTheCurrentPlayerTurn++;
+        try {
+            clients.elementAt(indexOfTheCurrentPlayerTurn).sendMessage(MessageCodes.YOUR_TURN,null);
+        } catch (InvalidRequestedCode invalidRequestedCode) {
+            invalidRequestedCode.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
      * sends the start game message
      */
     public static void startGame(){
         System.out.println("GAME STARTED");
-        for(Player player : clients)
+        for(Player player : clients) {
             try {
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
                 generateSerializablePlayerVector();
-                player.sendMessage(MessageCodes.CONECTED_USERS_VECTOR,serializablePlayers);
+                player.sendMessage(MessageCodes.CONECTED_USERS_VECTOR, serializablePlayers);
                 player.sendMessage(MessageCodes.GAME_READY_TO_START, null);
             } catch (InvalidRequestedCode invalidRequestedCode) {
                 invalidRequestedCode.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            // RANDUL PRIMULUI JUCATOR
+            clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN,null);
+            indexOfTheCurrentPlayerTurn = 0;
+        } catch (InvalidRequestedCode invalidRequestedCode) {
+            invalidRequestedCode.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 

@@ -168,6 +168,8 @@ public class Player implements Runnable{
 					setPosition((Integer)resp.getSerializableObject());
 					Server.updateUserPostion(getUsername(),getPosition());
 				}
+				if(resp.getMessageCodes() == MessageCodes.USER_END_TURN)
+					Server.nextPlayerTurn();
 			}
         }catch (SocketException e){
             System.out.println(username + " disconnected.");
