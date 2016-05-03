@@ -90,19 +90,19 @@ final class Server implements Runnable {
                     if (true) {
                         // if credentials are ok
                         currentConnectedClients++;
-                        objectOutputStream.writeObject(new Message(3, "You have connected."));
+                        objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
                         clients.add(new Player(username,socket,objectInputStream,objectOutputStream));
                         System.out.println(username + " connected.");
                         if(currentConnectedClients == requiredClients)
                             startGame();
                     } else {
-                        objectOutputStream.writeObject(new Message(4, "Username / password invalid!"));
+                        objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
                         objectInputStream.close();
                         objectOutputStream.close();
                         socket.close();
                     }
                 else{
-                    objectOutputStream.writeObject(new Message(4, "Maximum connexions reached."));
+                    objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Maximum connexions reached."));
                     objectInputStream.close();
                     objectOutputStream.close();
                     socket.close();

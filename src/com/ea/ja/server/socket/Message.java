@@ -4,18 +4,26 @@ import java.io.Serializable;
 
 public class Message implements Serializable{
 
-	 private int code;
+	 	private MessageCodes messageCodes;
 	    private Object serializableObject;
 	    private static final long serialVersionUID = 42L;
 
-	    /**
+    public MessageCodes getMessageCodes() {
+        return messageCodes;
+    }
+
+    public void setMessageCodes(MessageCodes messageCodes) {
+        this.messageCodes = messageCodes;
+    }
+
+    /**
 	     *
-	     * @param code integer between 0 and NaN
+	     * @param messageCodes integer between 0 and NaN
 	     * @param serializableObject serializable object, respecting the contract of codes
 	     * @throws InvalidRequestedCode if the requested code is invalid
 	     */
-	    public Message(int code, Object serializableObject) throws InvalidRequestedCode {
-	        setCode(code);
+	    public Message(MessageCodes messageCodes, Object serializableObject) throws InvalidRequestedCode {
+	        setMessageCodes(messageCodes);
 	        setSerializableObject(serializableObject);
 	    }
 
@@ -23,20 +31,7 @@ public class Message implements Serializable{
 	     *
 	     * @return type code of the message
 	     */
-	    public int getCode() {
-	        return code;
-	    }
 
-	    /**
-	     * setter for the code
-	     * @param code code of the message
-	     * @throws InvalidRequestedCode if the requested code is invalid
-	     */
-	    private void setCode(int code) throws InvalidRequestedCode {
-	        if(code < 0)
-	            throw new InvalidRequestedCode("Requested code is invalid!");
-	        this.code = code;
-	    }
 
 	    /**
 	     *
