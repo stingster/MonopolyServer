@@ -23,7 +23,7 @@ public class Player implements Runnable{
 	private int money;
 	private List<Commodity> commodities = new ArrayList<>();
 	private boolean isLogged;
-    private Socket socket;
+    private Socket socket; 
     private Thread thread;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;

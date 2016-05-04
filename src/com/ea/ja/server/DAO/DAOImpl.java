@@ -44,7 +44,7 @@ public class DAOImpl implements DAO {
 			pStatement.setInt(5, 0);
 			pStatement.execute();
 			return true;
-		} catch (SQLException e) {
+		} catch (SQLException e) { 
 			System.out.println("User already exists!");
 			e.printStackTrace();
 			return false;
