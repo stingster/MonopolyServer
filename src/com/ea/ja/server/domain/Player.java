@@ -169,7 +169,8 @@ public class Player implements Runnable{
 					Server.updateUserPostion(getUsername(),getPosition());
 				}
 				if(resp.getMessageCodes() == MessageCodes.USER_END_TURN)
-					Server.nextPlayerTurn();
+                    Server.nextPlayerTurn();
+
 
 			}
         }catch (SocketException e){

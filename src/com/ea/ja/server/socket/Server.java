@@ -76,6 +76,7 @@ public final class Server implements Runnable {
      * gives permission to turn to next player
      */
     public static void nextPlayerTurn(){
+        System.out.println("NEXT PLAYER TURN");
         indexOfTheCurrentPlayerTurn++;
         indexOfTheCurrentPlayerTurn %= requiredClients;
         try {
