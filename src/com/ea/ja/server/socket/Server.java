@@ -62,6 +62,7 @@ public final class Server implements Runnable {
      */
     public static void stopServer(){
         isRunning = false;
+        thread.interrupt();
         System.out.println("Server stopped.");
     }
 

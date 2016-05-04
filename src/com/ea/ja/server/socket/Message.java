@@ -41,7 +41,7 @@ public class Message implements Serializable{
 	        return serializableObject;
 	    }
 
-	    /**
+	    /** 
 	     * setter of the object
 	     * @param serializableObject the object
 	     */
