@@ -7,7 +7,7 @@ import com.ea.ja.server.domain.Player;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
@@ -15,7 +15,7 @@ import java.util.Vector;
 public final class Server implements Runnable {
 
     private static int LISTENING_PORT = 8080;
-    private static int requiredClients = 2;
+    private static int requiredClients = 1;
     private static int currentConnectedClients = 0;
     private static Server server = new Server();
     private static Thread thread;
