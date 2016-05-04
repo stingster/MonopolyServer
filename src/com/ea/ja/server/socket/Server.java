@@ -108,10 +108,27 @@ public final class Server implements Runnable {
 
         try {
             // RANDUL PRIMULUI JUCATOR
-            clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN,null);
+            Thread thread = new Thread(()->{
+
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN,null);
+                } catch (InvalidRequestedCode invalidRequestedCode) {
+                    invalidRequestedCode.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(clients.elementAt(0).getUsername() + " a primit mesaj your turn.");
+
+            });
+            thread.start();
             indexOfTheCurrentPlayerTurn = 0;
-        } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
-            invalidRequestedCode.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
