@@ -77,8 +77,9 @@ public final class Server implements Runnable {
      */
     public static void nextPlayerTurn(){
         indexOfTheCurrentPlayerTurn++;
+        indexOfTheCurrentPlayerTurn %= requiredClients;
         try {
-            clients.elementAt(indexOfTheCurrentPlayerTurn).sendMessage(MessageCodes.YOUR_TURN,null);
+            clients.elementAt(indexOfTheCurrentPlayerTurn).sendMessage(MessageCodes.YOUR_TURN, null);
         } catch (InvalidRequestedCode invalidRequestedCode) {
             invalidRequestedCode.printStackTrace();
         } catch (IOException e) {
@@ -90,12 +91,12 @@ public final class Server implements Runnable {
     /**
      * sends the start game message
      */
-    public static void startGame(){
+    private static void startGame(){
         System.out.println("GAME STARTED");
+        generateSerializablePlayerVector();
         for(Player player : clients) {
             try {
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
-                generateSerializablePlayerVector();
                 player.sendMessage(MessageCodes.CONECTED_USERS_VECTOR, serializablePlayers);
                 player.sendMessage(MessageCodes.GAME_READY_TO_START, null);
             } catch (InvalidRequestedCode invalidRequestedCode) {
@@ -104,17 +105,14 @@ public final class Server implements Runnable {
                 e.printStackTrace();
             }
         }
+
         try {
             // RANDUL PRIMULUI JUCATOR
             clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN,null);
             indexOfTheCurrentPlayerTurn = 0;
-        } catch (InvalidRequestedCode invalidRequestedCode) {
+        } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
             invalidRequestedCode.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-
     }
 
     /**
@@ -156,7 +154,9 @@ public final class Server implements Runnable {
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
                         // ID TOKEN
                         objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID,currentConnectedClients));
+                        System.out.println("TOKEN ID SENT TO " + username + ": " + currentConnectedClients);
                         clients.add(new Player(username,socket,objectInputStream,objectOutputStream));
+                        clients.lastElement().setToken(currentConnectedClients);
                         System.out.println(username + " connected.");
 
                         if(currentConnectedClients == requiredClients)
