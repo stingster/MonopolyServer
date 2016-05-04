@@ -17,14 +17,14 @@ public class DAOImpl implements DAO {
 
 	@Override
 	public Connection createConnection() {
-		if (connection == null) {
-			try {
+		try {
+			if (connection == null || connection.isClosed()) {
 				Class.forName("com.mysql.jdbc.Driver");
 				connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Monopoly", "root", "");
-			} catch (SQLException | ClassNotFoundException e) {
-				System.out.println("Connection wasn't created!");
-				e.printStackTrace();
 			}
+		} catch (SQLException | ClassNotFoundException e) {
+			System.out.println("Connection wasn't created!");
+			e.printStackTrace();
 		}
 		return connection;
 	}
@@ -44,7 +44,7 @@ public class DAOImpl implements DAO {
 			pStatement.setInt(5, 0);
 			pStatement.execute();
 			return true;
-		} catch (SQLException e) { 
+		} catch (SQLException e) {
 			System.out.println("User already exists!");
 			e.printStackTrace();
 			return false;
@@ -67,11 +67,11 @@ public class DAOImpl implements DAO {
 			resultSet = pStatement.executeQuery();
 
 			while (resultSet.next()) {
-					Player player = new Player(username, password);
-					player.setPosition(resultSet.getInt("position"));
-					player.setToken(resultSet.getInt("token"));
-					player.setMoney(resultSet.getInt("money"));
-					return player;
+				Player player = new Player(username, password);
+				player.setPosition(resultSet.getInt("position"));
+				player.setToken(resultSet.getInt("token"));
+				player.setMoney(resultSet.getInt("money"));
+				return player;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -84,24 +84,24 @@ public class DAOImpl implements DAO {
 	@Override
 	public int checkNumberOfLoggedPlayers() {
 		connection = createConnection();
-		
+
 		sql = "SELECT COUNT(isLogged) FROM player WHERE isLogged = ?";
-		
+
 		try {
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setInt(1, 1);
 			resultSet = pStatement.executeQuery();
-			
-			if(resultSet != null){
+
+			if (resultSet != null) {
 				return resultSet.getInt(0);
 			}
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			closeConnection();
-		}	
+		}
 		return -1;
 	}
 
@@ -109,8 +109,8 @@ public class DAOImpl implements DAO {
 	public synchronized Player move(String username, int initialPosition, int dice) {
 		connection = createConnection();
 
-		if(verifyPosition(username, initialPosition)){
-			
+		if (verifyPosition(username, initialPosition)) {
+
 			initialPosition = (initialPosition + dice) % 40;
 			sql = "UPDATE player SET position = ? WHERE username = ?";
 			try {
@@ -121,39 +121,39 @@ public class DAOImpl implements DAO {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 			sql = "SELECT * FROM player WHERE username = ?;";
 			try {
 				pStatement.setString(1, username);
 				resultSet = pStatement.executeQuery();
-				
+
 				Player player = new Player(resultSet.getString("username"));
 				player.setPosition(resultSet.getInt("position"));
 				player.setToken(resultSet.getInt("token"));
 				player.setMoney(resultSet.getInt("money"));
 				return player;
-				
+
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
 				closeConnection();
-			}	
+			}
 		}
 		return null;
 	}
 
 	private boolean verifyPosition(String username, int initialPosition) {
-		
+
 		sql = "SELECT position FROM player WHERE username = ?;";
-		
+
 		try {
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, username);
-			resultSet = pStatement.executeQuery();	
-			if(resultSet != null && resultSet.getInt(0) == initialPosition){
-				 return true;
-			}	
+			resultSet = pStatement.executeQuery();
+			if (resultSet != null && resultSet.getInt(0) == initialPosition) {
+				return true;
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
