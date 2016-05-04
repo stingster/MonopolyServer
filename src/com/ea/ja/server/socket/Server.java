@@ -60,10 +60,13 @@ public final class Server implements Runnable {
     /**
      * stops the server
      */
-    public static void stopServer(){
+   
+	public static void stopServer(){
         isRunning = false;
-        thread.interrupt();
+        System.exit(0);        
         System.out.println("Server stopped.");
+        
+        
     }
 
     /**
@@ -168,7 +171,7 @@ public final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < requiredClients)
-                    if (Business.dao.logIn(username, password) != null) {
+                    if (Business.dao.logIn(username, password) != null) {                    	
                         // if credentials are ok
                         currentConnectedClients++;
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
@@ -185,7 +188,7 @@ public final class Server implements Runnable {
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
                         objectInputStream.close();
                         objectOutputStream.close();
-                        socket.close();
+                        //socket.close();
                     }
                 else{
                     objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Maximum connexions reached."));

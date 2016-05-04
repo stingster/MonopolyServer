@@ -20,7 +20,7 @@ public class DAOImpl implements DAO {
 		try {
 			if (connection == null || connection.isClosed()) {
 				Class.forName("com.mysql.jdbc.Driver");
-				connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Monopoly", "root", "");
+				connection = DriverManager.getConnection("jdbc:mysql://10.45.52.104:3306/Monopoly", "root", "");
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			System.out.println("Connection wasn't created!");

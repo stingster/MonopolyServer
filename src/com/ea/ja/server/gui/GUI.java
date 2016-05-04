@@ -36,6 +36,10 @@ public class GUI extends JFrame{
 		JLabel clients = new JLabel(" Set minimum number of players  :   ");
 		JButton start = new JButton(" Start server ");
 		JButton stop = new JButton(" Stop server");
+		
+		/**
+		 * Start Server 
+		 */
 		start.addActionListener(new ActionListener()
 		{
 			
@@ -56,6 +60,10 @@ public class GUI extends JFrame{
 				Server.startServer();
 			}		
 		});
+		
+		/**
+		 * Stop Server
+		 */
 		stop.addActionListener(new ActionListener() {
 			
 			@Override
