@@ -102,17 +102,18 @@ public class Player implements Runnable{
 		this.token = token;
 	}
 
-	@Override
+	
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((commodities == null) ? 0 : commodities.hashCode());
 		result = prime * result + (isLogged ? 1231 : 1237);
 		result = prime * result + money;
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + position;
-//		result = prime * result + ((token == null) ? 0 : token.hashCode());
+		result = prime * result + token;
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
 
@@ -134,11 +135,6 @@ public class Player implements Runnable{
 			return false;
 		if (money != other.money)
 			return false;
-		if (username == null) {
-			if (other.username != null)
-				return false;
-		} else if (!username.equals(other.username))
-			return false;
 		if (password == null) {
 			if (other.password != null)
 				return false;
@@ -146,15 +142,17 @@ public class Player implements Runnable{
 			return false;
 		if (position != other.position)
 			return false;
-//		if (token == null) {
-//			if (other.token != null)
-//				return false;
-//		} else if (!token.equals(other.token))
-//			return false;
+		if (token != other.token)
+			return false;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
 		return true;
 	}
-	
-    public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
+
+	public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(code, serializedObject));
     }
 
