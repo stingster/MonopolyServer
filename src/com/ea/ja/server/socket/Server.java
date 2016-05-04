@@ -1,5 +1,6 @@
 package com.ea.ja.server.socket;
 
+import com.ea.ja.server.DAO.Business;
 import com.ea.ja.server.DAO.DAO;
 import com.ea.ja.server.DAO.DAOImpl;
 import com.ea.ja.server.domain.Player;
@@ -155,7 +156,7 @@ public final class Server implements Runnable {
      */
     @Override
     public void run() {
-        dao = new DAOImpl();
+//        dao = new DAOImpl();
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             while (isRunning) {
@@ -166,7 +167,7 @@ public final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < requiredClients)
-                    if (true) {
+                    if (Business.dao.logIn(username, password) != null) {
                         // if credentials are ok
                         currentConnectedClients++;
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
