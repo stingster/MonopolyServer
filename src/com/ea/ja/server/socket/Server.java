@@ -61,6 +61,7 @@ public final class Server implements Runnable {
      */
     public static void stopServer(){
         isRunning = false;
+        System.out.println("Server stopped.");
     }
 
     /**

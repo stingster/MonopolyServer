@@ -24,21 +24,24 @@ public class GUI extends JFrame{
 		GridBagConstraints grid = new GridBagConstraints();
 		
 		setLayout(new GridBagLayout());
-		setSize(400,200);
+		setSize(380,150);
 		
-		port = new JTextField(10);
+		port = new JTextField(6);
+		port.setText("8080");
+		
+	
 		Integer[] items = {2,3,4,5,6,7,8};
 		requiredNoOfClients = new JComboBox<>(items);
-		JLabel portlb = new JLabel(" Port :");
-		JLabel clients = new JLabel(" Set minimum number of players  :");
+		JLabel portlb = new JLabel(" Port :   ");
+		JLabel clients = new JLabel(" Set minimum number of players  :   ");
 		JButton start = new JButton(" Start server ");
-		JButton stop = new JButton(" Stop");
+		JButton stop = new JButton(" Stop server");
 		start.addActionListener(new Listner());
 		stop.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				Server.stopServer();
 				
 			}
 		});
@@ -46,8 +49,9 @@ public class GUI extends JFrame{
 		
 		
 		// firt col
-		grid.weightx = 0.5;
-		grid.weighty = 0.5;
+		grid.anchor = GridBagConstraints.LINE_END;
+		grid.weightx = 0;
+		grid.weighty = 0.05;
 		grid.gridx=0;
 		grid.gridy =0;
 		add(portlb, grid);
@@ -56,8 +60,11 @@ public class GUI extends JFrame{
 		grid.gridy =1;
 		add(clients,grid);
 		
-		// second col
 		
+		
+		// second col
+		grid.anchor = GridBagConstraints.LINE_START;
+		grid.weightx = 0.5;
 		grid.gridx=1;
 		grid.gridy =0;
 		add(port,grid);
@@ -66,19 +73,25 @@ public class GUI extends JFrame{
 		grid.gridy =1;
 		add(requiredNoOfClients, grid);
 		
+		//// buttons
+		grid.weighty =0.2;
+		grid.anchor = GridBagConstraints.CENTER;
+		grid.gridx =0;
+		grid.gridy =3;
+		add(stop,grid);
 		
-		grid.weighty = 2;
+		
+		grid.anchor = GridBagConstraints.LINE_START;
+		
 		grid.gridx =1;
 		grid.gridy =3;
 		add(start,grid);
 		
-		grid.weighty = 2;
-		grid.gridx =0;
-		grid.gridy =3;
-		add(stop,grid);
-//		
 		
+//		
+		this.setResizable(false);
 		this.setVisible(true);
+		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	class Listner implements ActionListener{
