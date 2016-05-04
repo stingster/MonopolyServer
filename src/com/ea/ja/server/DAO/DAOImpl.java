@@ -44,7 +44,7 @@ public class DAOImpl implements DAO {
 			pStatement.setInt(5, 0);
 			pStatement.execute();
 			return true;
-		} catch (SQLException e) {
+		} catch (SQLException e) { 
 			System.out.println("User already exists!");
 			e.printStackTrace();
 			return false;
@@ -69,7 +69,7 @@ public class DAOImpl implements DAO {
 			while (resultSet.next()) {
 					Player player = new Player(username, password);
 					player.setPosition(resultSet.getInt("position"));
-//					player.setToken(resultSet.getString("token"));
+					player.setToken(resultSet.getInt("token"));
 					player.setMoney(resultSet.getInt("money"));
 					return player;
 			}
@@ -129,7 +129,7 @@ public class DAOImpl implements DAO {
 				
 				Player player = new Player(resultSet.getString("username"));
 				player.setPosition(resultSet.getInt("position"));
-//				player.setToken(resultSet.getString("token"));
+				player.setToken(resultSet.getInt("token"));
 				player.setMoney(resultSet.getInt("money"));
 				return player;
 				
