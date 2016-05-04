@@ -36,7 +36,26 @@ public class GUI extends JFrame{
 		JLabel clients = new JLabel(" Set minimum number of players  :   ");
 		JButton start = new JButton(" Start server ");
 		JButton stop = new JButton(" Stop server");
-		start.addActionListener(new Listner());
+		start.addActionListener(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				s=port.getText();
+				numberOfClients=(int) requiredNoOfClients.getSelectedItem();
+				Server.setRequiredClients(numberOfClients);
+				try {
+					Server.setListeningPort( Integer.parseInt(s));
+				} catch (NumberFormatException e1) {
+					
+					e1.printStackTrace();
+				} catch (Exception e1) {
+					
+					e1.printStackTrace();
+				}		
+				Server.startServer();
+			}		
+		});
 		stop.addActionListener(new ActionListener() {
 			
 			@Override
@@ -93,25 +112,6 @@ public class GUI extends JFrame{
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-	class Listner implements ActionListener{
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			s=port.getText();
-			numberOfClients=(int) requiredNoOfClients.getSelectedItem();
-			Server.setRequiredClients(numberOfClients);
-			try {
-				Server.setListeningPort( Integer.parseInt(s));
-			} catch (NumberFormatException e1) {
-				
-				e1.printStackTrace();
-			} catch (Exception e1) {
-				
-				e1.printStackTrace();
-			}		
-			Server.startServer();
-		}		
 	}
 
 }
