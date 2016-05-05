@@ -172,7 +172,6 @@ public final class Server implements Runnable {
      */
     @Override
     public void run() {
-
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             while (isRunning) {
@@ -183,7 +182,7 @@ public final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < requiredClients)
-//                    if(true){
+//                  if(true){
                     if (Business.dao.logIn(username, password) != null) {
                         // if credentials are ok
                         currentConnectedClients++;
@@ -219,6 +218,6 @@ public final class Server implements Runnable {
             System.out.println("IOException");
             e.printStackTrace();
         }
-        System.out.println("STOPPED");
+        System.err.println("SERVER STOPPED");
     }
 }
