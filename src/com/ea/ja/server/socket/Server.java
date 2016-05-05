@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * all client sockets listens in the same time for requests
  * messages can be sent to all clients, publically or private
  * @author achesnoiu
- * @version 1.0
+ * @version 1.0 (user story 1 FINAL)
  */
 
 public final class Server implements Runnable {
