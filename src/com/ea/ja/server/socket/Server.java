@@ -26,6 +26,11 @@ public final class Server implements Runnable {
     private static Vector<SerializablePlayer> serializablePlayers = new Vector<>();
     private static int indexOfTheCurrentPlayerTurn;
 
+
+    static Server getInstance(){
+        return server;
+    }
+
     /**
      * private constructor
      * singleton pattern
@@ -60,13 +65,12 @@ public final class Server implements Runnable {
     /**
      * stops the server
      */
-   
-	public static void stopServer(){
+    public static void stopServer(){
         isRunning = false;
-        System.exit(0);        
+        thread.interrupt();
         System.out.println("Server stopped.");
-        
-        
+        System.exit(0);
+
     }
 
     /**
@@ -116,7 +120,6 @@ public final class Server implements Runnable {
         try {
             // RANDUL PRIMULUI JUCATOR
             Thread thread = new Thread(()->{
-
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
@@ -172,7 +175,7 @@ public final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < requiredClients)
-                    if (Business.dao.logIn(username, password) != null) {                    	
+                    if (Business.dao.logIn(username, password) != null) {
                         // if credentials are ok
                         currentConnectedClients++;
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
@@ -189,7 +192,7 @@ public final class Server implements Runnable {
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
                         objectInputStream.close();
                         objectOutputStream.close();
-                        //socket.close();
+                        socket.close();
                     }
                 else{
                     objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Maximum connexions reached."));
@@ -208,5 +211,7 @@ public final class Server implements Runnable {
             System.out.println("IOException");
             e.printStackTrace();
         }
+        System.out.println("STOPPED");
+
     }
 }

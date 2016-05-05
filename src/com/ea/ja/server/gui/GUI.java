@@ -40,38 +40,26 @@ public class GUI extends JFrame{
 		/**
 		 * Start Server 
 		 */
-		start.addActionListener(new ActionListener()
-		{
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				s=port.getText();
-				numberOfClients=(int) requiredNoOfClients.getSelectedItem();
-				Server.setRequiredClients(numberOfClients);
-				try {
-					Server.setListeningPort( Integer.parseInt(s));
-				} catch (NumberFormatException e1) {
-					
-					e1.printStackTrace();
-				} catch (Exception e1) {
-					
-					e1.printStackTrace();
-				}		
-				Server.startServer();
-			}		
-		});
+		start.addActionListener(e -> {
+            s=port.getText();
+            numberOfClients=(int) requiredNoOfClients.getSelectedItem();
+            Server.setRequiredClients(numberOfClients);
+            try {
+                Server.setListeningPort( Integer.parseInt(s));
+            } catch (NumberFormatException e1) {
+
+                e1.printStackTrace();
+            } catch (Exception e1) {
+
+                e1.printStackTrace();
+            }
+            Server.startServer();
+        });
 		
 		/**
 		 * Stop Server
 		 */
-		stop.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Server.stopServer();
-				
-			}
-		});
+		stop.addActionListener(e -> Server.stopServer());
 		
 		
 		
