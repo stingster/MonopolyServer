@@ -52,12 +52,18 @@ public final class Server implements Runnable {
         Server.requiredClients = requiredClients;
     }
 
+    /**
+     * @author achesnoiu
+     * start the server
+     * @see com.ea.ja.server.gui.GUI
+     */
     public static void startServer(){
         isRunning = true;
         thread.start();
     }
 
     /**
+     * @author achesnoiu
      * sets the listening port
      * @param listeningPort must be an integer between 8000 and 9999
      */
@@ -68,6 +74,7 @@ public final class Server implements Runnable {
     }
 
     /**
+     * @author achesnoiu
      * stops the server, and exista the application
      */
     public static void stopServer(){
@@ -77,7 +84,8 @@ public final class Server implements Runnable {
     }
 
     /**
-     * generates serializable vector with all the connected players
+     * @author achesnoiu
+     * generates serializable vector with all the current connected players
      */
     private static void generateSerializablePlayerVector(){
         serializablePlayers.addAll(clients.stream().map(player -> new SerializablePlayer(player.getUsername(), player.getToken())).collect(Collectors.toList()));
@@ -85,6 +93,7 @@ public final class Server implements Runnable {
     }
 
     /**
+     * @author achesnoiu
      * gives permission to turn to next player
      */
     public static void nextPlayerTurn(){
@@ -99,7 +108,11 @@ public final class Server implements Runnable {
     }
 
     /**
-     * sends the start game message to all the connected players
+     * @author achesnoiu
+     * sends MessageCodes.GAME_READY_TO_START to all the connected players
+     * sends NUMBER_OF_PLAYERS to all the connected players
+     * sends CONNECTED_USERS_VECTOR to all the connected players
+     * sends YOUR_TURN to the first player connected only
      */
     private static void startGame(){
         System.out.println("GAME STARTED");
@@ -138,7 +151,8 @@ public final class Server implements Runnable {
     }
 
     /**
-     * informs all players about a player location's update
+     * @author achesnoiu
+     * informs all players about username's player location's update
      * @param username username of the user
      * @param newPosition new position of the user
      */
@@ -153,6 +167,7 @@ public final class Server implements Runnable {
     }
 
     /**
+     * @author achesnoiu
      * server thread run method
      */
     @Override
