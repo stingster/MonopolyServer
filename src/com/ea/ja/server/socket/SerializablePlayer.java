@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author achesnoiu
  * @version 1.0 (user story 1 FINAL)
  */
-class SerializablePlayer implements Serializable{
+public class SerializablePlayer implements Serializable{
 
     private String username;
     private int tokenId;
