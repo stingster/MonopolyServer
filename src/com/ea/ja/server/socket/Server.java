@@ -129,13 +129,11 @@ public final class Server implements Runnable {
                 invalidRequestedCode.printStackTrace();
             }
         }
-
         try {
             // RANDUL PRIMULUI JUCATOR
             Thread thread = new Thread(()->{
                 try {
                     Thread.sleep(5000);
-
                     try {
                         clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN,null);
                     } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
@@ -186,8 +184,8 @@ public final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < requiredClients)
-//                  if(true){
-                    if (Business.dao.logIn(username, password) != null) {
+                  if(true){
+//                    if (Business.dao.logIn(username, password) != null) {
                         // if credentials are ok
                         currentConnectedClients++;
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
