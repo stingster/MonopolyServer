@@ -6,7 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.commons.dbcp.BasicDataSource;
+
 import com.ea.ja.server.domain.Player;
+import com.sun.javafx.event.BasicEventDispatcher;
 
 public class DAOImpl implements DAO {
 
@@ -14,28 +17,40 @@ public class DAOImpl implements DAO {
 	private PreparedStatement pStatement;
 	private ResultSet resultSet;
 	private String sql;
+	private static final BasicDataSource dataSource;
 
-	@Override
-	public Connection createConnection() {
-		try {
-			if (connection == null || connection.isClosed()) {
-				Class.forName("com.mysql.jdbc.Driver");
-				connection = DriverManager.getConnection("jdbc:mysql://10.45.52.104:3306/Monopoly", "root", "");
-			}
-		} catch (SQLException | ClassNotFoundException e) {
-			System.out.println("Connection wasn't created!");
-			e.printStackTrace();
-		}
-		return connection;
+	static 
+	{
+		dataSource = new BasicDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/Monopoly");
+		dataSource.setUsername("root");
+		dataSource.setPassword("");
 	}
+
+	private Connection getConnection() throws SQLException {
+		return dataSource.getConnection();
+	}
+
+	/*
+	 * @Override public Connection createConnection() { try { if (connection ==
+	 * null || connection.isClosed()) { Class.forName("com.mysql.jdbc.Driver");
+	 * connection =
+	 * DriverManager.getConnection("jdbc:mysql://localhost:3306/Monopoly",
+	 * "root", ""); } } catch (SQLException | ClassNotFoundException e) {
+	 * System.out.println("Connection wasn't created!"); e.printStackTrace(); }
+	 * return connection; }
+	 */
 
 	@Override
 	public synchronized boolean createUser(Player player) {
 
-		connection = createConnection();
-
-		sql = "INSERT INTO player values(?, ?, ?, ?, ?);";
 		try {
+
+			connection = getConnection();
+
+			sql = "INSERT INTO player values(?, ?, ?, ?, ?);";
+
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, player.getUsername());
 			pStatement.setString(2, player.getPassword());
@@ -56,11 +71,11 @@ public class DAOImpl implements DAO {
 	@Override
 	public synchronized Player logIn(String username, String password) {
 
-		connection = createConnection();
-
-		sql = "SELECT * FROM player WHERE username = ? AND password = ?;";
-
 		try {
+			connection = getConnection();
+
+			sql = "SELECT * FROM player WHERE username = ? AND password = ?;";
+
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, username);
 			pStatement.setString(2, password);
@@ -83,11 +98,13 @@ public class DAOImpl implements DAO {
 
 	@Override
 	public int checkNumberOfLoggedPlayers() {
-		connection = createConnection();
-
-		sql = "SELECT COUNT(isLogged) FROM player WHERE isLogged = ?";
 
 		try {
+
+			connection = getConnection();
+
+			sql = "SELECT COUNT(isLogged) FROM player WHERE isLogged = ?";
+
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setInt(1, 1);
 			resultSet = pStatement.executeQuery();
@@ -107,39 +124,38 @@ public class DAOImpl implements DAO {
 
 	@Override
 	public synchronized Player move(String username, int initialPosition, int dice) {
-		connection = createConnection();
 
-		if (verifyPosition(username, initialPosition)) {
+		try {
+			
+			connection = getConnection();
 
-			initialPosition = (initialPosition + dice) % 40;
-			sql = "UPDATE player SET position = ? WHERE username = ?";
-			try {
+			if (verifyPosition(username, initialPosition)) {
+
+				initialPosition = (initialPosition + dice) % 40;
+				sql = "UPDATE player SET position = ? WHERE username = ?";
+
 				pStatement.setInt(1, initialPosition);
 				pStatement.setString(2, username);
 				pStatement.executeUpdate();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 
-			sql = "SELECT * FROM player WHERE username = ?;";
-			try {
 				pStatement.setString(1, username);
 				resultSet = pStatement.executeQuery();
+
+				sql = "SELECT * FROM player WHERE username = ?;";
 
 				Player player = new Player(resultSet.getString("username"));
 				player.setPosition(resultSet.getInt("position"));
 				player.setToken(resultSet.getInt("token"));
 				player.setMoney(resultSet.getInt("money"));
 				return player;
-
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				closeConnection();
 			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			closeConnection();
 		}
+
 		return null;
 	}
 
@@ -161,7 +177,7 @@ public class DAOImpl implements DAO {
 		return false;
 	}
 
-	@Override
+
 	public void closeConnection() {
 		try {
 			if (connection != null) {

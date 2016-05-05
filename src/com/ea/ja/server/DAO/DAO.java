@@ -7,7 +7,6 @@ import com.ea.ja.server.domain.Player;
 public interface DAO {
 
 	// CREATE
-	Connection createConnection();
 	boolean createUser(Player player);
 	
 	
@@ -24,6 +23,6 @@ public interface DAO {
 	
 	
 	// DELETE
-	void closeConnection();
+
 	
 }

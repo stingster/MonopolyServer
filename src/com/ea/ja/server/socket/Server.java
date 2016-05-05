@@ -2,7 +2,6 @@ package com.ea.ja.server.socket;
 
 import com.ea.ja.server.DAO.Business;
 import com.ea.ja.server.DAO.DAO;
-import com.ea.ja.server.DAO.DAOImpl;
 import com.ea.ja.server.domain.Player;
 
 import java.io.IOException;
@@ -188,7 +187,7 @@ public final class Server implements Runnable {
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
                         objectInputStream.close();
                         objectOutputStream.close();
-                        //socket.close();
+                        socket.close();
                     }
                 else{
                     objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Maximum connexions reached."));
