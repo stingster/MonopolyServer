@@ -42,13 +42,15 @@ public final class Server implements Runnable {
         thread = new Thread(this);
     }
 
-
     /**
      * @author achesnoiu
      * sets the requires clients number
      * @param requiredClients must be an integer in [2,8]
+     * @throws Exception if requiredClient is not valid
      */
-    public static void setRequiredClients(int requiredClients) {
+    public static void setRequiredClients(int requiredClients) throws Exception {
+        if(requiredClients < 2 || requiredClients > 8)
+            throw new Exception("Invalid Required Clients");
         Server.requiredClients = requiredClients;
     }
 

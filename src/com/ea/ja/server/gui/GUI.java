@@ -43,8 +43,12 @@ public class GUI extends JFrame{
 		start.addActionListener(e -> {
             s=port.getText();
             numberOfClients=(int) requiredNoOfClients.getSelectedItem();
-            Server.setRequiredClients(numberOfClients);
-            try {
+			try {
+				Server.setRequiredClients(numberOfClients);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			try {
                 Server.setListeningPort( Integer.parseInt(s));
             } catch (NumberFormatException e1) {
 
