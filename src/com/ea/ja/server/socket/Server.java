@@ -25,13 +25,13 @@ public final class Server implements Runnable {
 
     private static int LISTENING_PORT = 8080;
     private static int requiredClients = 1;
+    private static int indexOfTheCurrentPlayerTurn;
     private static int currentConnectedClients = 0;
+    private static boolean isRunning;
     private static Server server = new Server();
     private static Thread thread;
-    private static boolean isRunning;
     private static Vector<Player> clients = new Vector<>();
     private static Vector<SerializablePlayer> serializablePlayers = new Vector<>();
-    private static int indexOfTheCurrentPlayerTurn;
 
     /**
      * @author achesnoiu
@@ -97,6 +97,7 @@ public final class Server implements Runnable {
     /**
      * @author achesnoiu
      * gives permission to turn to next player
+     * @see Player
      */
     public static void nextPlayerTurn(){
         System.out.println("NEXT PLAYER TURN");
@@ -157,6 +158,7 @@ public final class Server implements Runnable {
      * informs all players about username's player location's update
      * @param username username of the user
      * @param newPosition new position of the user
+     * @see Player
      */
     public static void updateUserPostion(String username, int newPosition){
         System.out.println(username + " s-a mutat la pozitia " + newPosition);
