@@ -1,17 +1,25 @@
 package com.ea.ja.server.socket;
 
 import com.ea.ja.server.DAO.Business;
-import com.ea.ja.server.DAO.DAO;
-import com.ea.ja.server.DAO.DAOImpl;
 import com.ea.ja.server.domain.Player;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
+import java.util.stream.Collectors;
+
+/**
+ * EA JavaAcademy Monopoly Server Class
+ * Stable server for the Monopoly game application
+ * running using Java Sockets
+ * each client runs on a separate thread
+ * all client sockets listens in the same time for requests
+ * messages can be sent to all clients, publically or private
+ * @author achesnoiu
+ * @version 1.0
+ */
 
 public final class Server implements Runnable {
 
@@ -22,27 +30,24 @@ public final class Server implements Runnable {
     private static Thread thread;
     private static boolean isRunning;
     private static Vector<Player> clients = new Vector<>();
-    private static DAO dao;
     private static Vector<SerializablePlayer> serializablePlayers = new Vector<>();
     private static int indexOfTheCurrentPlayerTurn;
 
-
-    static Server getInstance(){
-        return server;
-    }
-
     /**
-     * private constructor
+     * @author achesnoiu
+     * private constructor for respecting the
      * singleton pattern
      */
     private Server(){
         thread = new Thread(this);
     }
 
-    public static int getRequiredClients() {
-        return requiredClients;
-    }
 
+    /**
+     * @author achesnoiu
+     * sets the requires clients number
+     * @param requiredClients must be an integer in [2,8]
+     */
     public static void setRequiredClients(int requiredClients) {
         Server.requiredClients = requiredClients;
     }
@@ -53,8 +58,8 @@ public final class Server implements Runnable {
     }
 
     /**
-     * set the listening port
-     * @param listeningPort
+     * sets the listening port
+     * @param listeningPort must be an integer between 8000 and 9999
      */
     public static void setListeningPort(int listeningPort) throws Exception {
         if(listeningPort < 8000 || listeningPort > 9999)
@@ -63,22 +68,19 @@ public final class Server implements Runnable {
     }
 
     /**
-     * stops the server
+     * stops the server, and exista the application
      */
     public static void stopServer(){
         isRunning = false;
-        thread.interrupt();
         System.out.println("Server stopped.");
         System.exit(0);
-
     }
 
     /**
-     * generates serializabel player vector
+     * generates serializable vector with all the connected players
      */
     private static void generateSerializablePlayerVector(){
-        for(Player player : clients)
-            serializablePlayers.add(new SerializablePlayer(player.getUsername(),player.getToken()));
+        serializablePlayers.addAll(clients.stream().map(player -> new SerializablePlayer(player.getUsername(), player.getToken())).collect(Collectors.toList()));
         System.out.println("SerializablePlayer vector generated!");
     }
 
@@ -91,16 +93,13 @@ public final class Server implements Runnable {
         indexOfTheCurrentPlayerTurn %= requiredClients;
         try {
             clients.elementAt(indexOfTheCurrentPlayerTurn).sendMessage(MessageCodes.YOUR_TURN, null);
-        } catch (InvalidRequestedCode invalidRequestedCode) {
+        } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
             invalidRequestedCode.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
-
     /**
-     * sends the start game message
+     * sends the start game message to all the connected players
      */
     private static void startGame(){
         System.out.println("GAME STARTED");
@@ -110,10 +109,8 @@ public final class Server implements Runnable {
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
                 player.sendMessage(MessageCodes.CONECTED_USERS_VECTOR, serializablePlayers);
                 player.sendMessage(MessageCodes.GAME_READY_TO_START, null);
-            } catch (InvalidRequestedCode invalidRequestedCode) {
+            } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
                 invalidRequestedCode.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 
@@ -122,18 +119,16 @@ public final class Server implements Runnable {
             Thread thread = new Thread(()->{
                 try {
                     Thread.sleep(5000);
+
+                    try {
+                        clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN,null);
+                    } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
+                        invalidRequestedCode.printStackTrace();
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                try {
-                    clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN,null);
-                } catch (InvalidRequestedCode invalidRequestedCode) {
-                    invalidRequestedCode.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 System.out.println(clients.elementAt(0).getUsername() + " a primit mesaj your turn.");
-
             });
             thread.start();
             indexOfTheCurrentPlayerTurn = 0;
@@ -143,7 +138,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * informs all player about a player location update
+     * informs all players about a player location's update
      * @param username username of the user
      * @param newPosition new position of the user
      */
@@ -152,10 +147,8 @@ public final class Server implements Runnable {
         for(Player player : clients)
             try {
                 player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username,newPosition));
-            } catch (InvalidRequestedCode invalidRequestedCode) {
+            } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
                 invalidRequestedCode.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
     }
 
@@ -164,7 +157,7 @@ public final class Server implements Runnable {
      */
     @Override
     public void run() {
-//        dao = new DAOImpl();
+
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             while (isRunning) {
@@ -175,6 +168,7 @@ public final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < requiredClients)
+//                    if(true){
                     if (Business.dao.logIn(username, password) != null) {
                         // if credentials are ok
                         currentConnectedClients++;
@@ -185,7 +179,6 @@ public final class Server implements Runnable {
                         clients.add(new Player(username,socket,objectInputStream,objectOutputStream));
                         clients.lastElement().setToken(currentConnectedClients);
                         System.out.println(username + " connected.");
-
                         if(currentConnectedClients == requiredClients)
                             startGame();
                     } else {
@@ -212,6 +205,5 @@ public final class Server implements Runnable {
             e.printStackTrace();
         }
         System.out.println("STOPPED");
-
     }
 }
