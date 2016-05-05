@@ -18,12 +18,12 @@ public class DAOImpl implements DAO {
 	private ResultSet resultSet;
 	private String sql;
 	private static final BasicDataSource dataSource;
+	static String ip = "10.45.52.104"; // ip mircea 10.45.52.104 alex 10.45.52.3
 
-	static 
-	{
+	static {
 		dataSource = new BasicDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://localhost:3306/Monopoly");
+		dataSource.setUrl("jdbc:mysql://" + ip + ":3306/Monopoly");
 		dataSource.setUsername("root");
 		dataSource.setPassword("");
 	}
@@ -31,16 +31,6 @@ public class DAOImpl implements DAO {
 	private Connection getConnection() throws SQLException {
 		return dataSource.getConnection();
 	}
-
-	/*
-	 * @Override public Connection createConnection() { try { if (connection ==
-	 * null || connection.isClosed()) { Class.forName("com.mysql.jdbc.Driver");
-	 * connection =
-	 * DriverManager.getConnection("jdbc:mysql://localhost:3306/Monopoly",
-	 * "root", ""); } } catch (SQLException | ClassNotFoundException e) {
-	 * System.out.println("Connection wasn't created!"); e.printStackTrace(); }
-	 * return connection; }
-	 */
 
 	@Override
 	public synchronized boolean createUser(Player player) {
@@ -126,7 +116,7 @@ public class DAOImpl implements DAO {
 	public synchronized Player move(String username, int initialPosition, int dice) {
 
 		try {
-			
+
 			connection = getConnection();
 
 			if (verifyPosition(username, initialPosition)) {
@@ -176,7 +166,6 @@ public class DAOImpl implements DAO {
 		}
 		return false;
 	}
-
 
 	public void closeConnection() {
 		try {

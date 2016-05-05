@@ -1,5 +1,4 @@
 package com.ea.ja.server.socket;
-
 import java.io.Serializable;
 
 /**
