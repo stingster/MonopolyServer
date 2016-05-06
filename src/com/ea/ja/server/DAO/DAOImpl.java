@@ -6,12 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.commons.dbcp.BasicDataSource;
 import com.ea.ja.server.domain.Player;
+
+
 public class DAOImpl implements DAO {
+	
 	private Connection connection;
 	private PreparedStatement pStatement;
 	private ResultSet resultSet;
 	private String sql;
 	private static final BasicDataSource dataSource;
+	
 	static
 	{
 		dataSource = new BasicDataSource();
@@ -55,13 +59,16 @@ public class DAOImpl implements DAO {
 	}
 	@Override
 	public synchronized Player logIn(String username, String password) {
+		
 		try {
+			
 			connection = getConnection();
 			sql = "SELECT * FROM player WHERE username = ? AND password = ?;";
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, username);
 			pStatement.setString(2, password);
 			resultSet = pStatement.executeQuery();
+			
 			while (resultSet.next()) {
 				Player player = new Player(username, password);
 				player.setPosition(resultSet.getInt("position"));
@@ -161,5 +168,20 @@ public class DAOImpl implements DAO {
 			System.out.println("Connection wasn't closed!");
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public boolean resetBoard() {
+		try {
+			connection = getConnection();
+			sql = "UPDATE player SET position = 0, token = 0, money = 0, isLogged = 0;";
+			pStatement = connection.prepareStatement(sql);
+			pStatement.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
