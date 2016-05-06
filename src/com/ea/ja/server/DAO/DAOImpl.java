@@ -1,5 +1,3 @@
-
-
 package com.ea.ja.server.DAO;
 
 import java.sql.Connection;
@@ -11,7 +9,6 @@ import java.sql.SQLException;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.ea.ja.server.domain.Player;
-import com.sun.javafx.event.BasicEventDispatcher;
 
 public class DAOImpl implements DAO {
 
@@ -25,7 +22,7 @@ public class DAOImpl implements DAO {
 	{
 		dataSource = new BasicDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://10.45.52.104:3306/Monopoly");
+		dataSource.setUrl("jdbc:mysql://localhost:3306/Monopoly");
 		dataSource.setUsername("root");
 		dataSource.setPassword("");
 	}
@@ -111,10 +108,9 @@ public class DAOImpl implements DAO {
 			pStatement.setInt(1, 1);
 			resultSet = pStatement.executeQuery();
 
-			if (resultSet != null) {
-				return resultSet.getInt(0);
+			if(resultSet.next()) {
+				return resultSet.getInt(1);
 			}
-
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,28 +122,33 @@ public class DAOImpl implements DAO {
 
 	@Override
 	public synchronized Player move(String username, int initialPosition, int dice) {
-		System.out.println(username + " incearca sa se mute de la " + initialPosition + " cu " + dice + " pozitii.");
-		try {
-			connection = getConnection();
-			if (verifyPosition(username, initialPosition)) {
-				initialPosition = (initialPosition + dice) % 40;
 
-				sql = "UPDATE player SET position = ? WHERE username = ?";
+		try {
+			
+			connection = getConnection();
+
+			if (verifyPosition(username, initialPosition)) {
+
+				initialPosition = (initialPosition + dice) % 40;
+				sql = "UPDATE player SET position = ? WHERE username = ?;";
+
 				pStatement = connection.prepareStatement(sql);
 				pStatement.setInt(1, initialPosition);
 				pStatement.setString(2, username);
-				pStatement.executeUpdate();
+				pStatement.executeQuery();
+
+				pStatement.setString(1, username);
+				resultSet = pStatement.executeQuery(sql);
 
 				sql = "SELECT * FROM player WHERE username = ?;";
-				pStatement = connection.prepareStatement(sql);
-				pStatement.setString(1, username);
-				resultSet = pStatement.executeQuery();
 
-				Player player = new Player(resultSet.getString("username"));
-				player.setPosition(resultSet.getInt("position"));
-				player.setToken(resultSet.getInt("token"));
-				player.setMoney(resultSet.getInt("money"));
-				return player;
+				while(resultSet.next()){
+					Player player = new Player(resultSet.getString("username"));
+					player.setPosition(resultSet.getInt("position"));
+					player.setToken(resultSet.getInt("token"));
+					player.setMoney(resultSet.getInt("money"));
+					return player;
+				}
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -167,12 +168,11 @@ public class DAOImpl implements DAO {
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, username);
 			resultSet = pStatement.executeQuery();
-
 			while(resultSet.next()){
-				if (resultSet != null && resultSet.getInt(1) == initialPosition) {
+				if(resultSet.getInt("position") == initialPosition){
 					return true;
 				}
-			}
+			} 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -198,4 +198,3 @@ public class DAOImpl implements DAO {
 		}
 	}
 }
-
