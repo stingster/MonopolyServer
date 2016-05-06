@@ -16,7 +16,7 @@ import com.ea.ja.server.socket.InvalidRequestedCode;
 import com.ea.ja.server.socket.Server;
 
 
-public final class Player implements Runnable{
+public final class Player implements Runnable,Comparable<Player>{
 
 	private String username;
 	private String password;
@@ -243,8 +243,20 @@ public final class Player implements Runnable{
             }
         }catch (SocketException e){
             System.out.println(username + " disconnected.");
+            Server.userDisconnected(username);
         } catch (IOException | ClassNotFoundException | InvalidRequestedCode e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @author achesnoiu
+     * compareTo method, for using BinarySearch
+     * @param o
+     * @return integer value of compare to
+     */
+    @Override
+    public int compareTo(Player o) {
+        return username.compareTo(o.username);
     }
 }

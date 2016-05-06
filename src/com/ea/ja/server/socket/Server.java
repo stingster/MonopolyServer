@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Collections;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -175,6 +176,17 @@ public final class Server implements Runnable {
 //            player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username,newPosition));
         }
         threads.forEach(Thread::start);
+    }
+
+    /**
+     * removes disconnected username from clients vector
+     * @param username username of the dissconected client
+     */
+    public static void userDisconnected(String username){
+        int index = Collections.binarySearch(clients,new Player(username));
+        System.out.println("Dissconected player " + username + " has index " + index);
+        if(index >= 0 && index < clients.size())
+            clients.removeElementAt(index);
     }
 
     /**
