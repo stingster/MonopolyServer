@@ -246,7 +246,5 @@ public final class Player implements Runnable{
         } catch (IOException | ClassNotFoundException | InvalidRequestedCode e) {
             e.printStackTrace();
         }
-
     }
-	
 }
