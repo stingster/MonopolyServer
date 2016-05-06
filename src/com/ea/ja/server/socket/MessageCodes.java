@@ -8,6 +8,7 @@ import java.io.Serializable;
  */
 public enum MessageCodes implements Serializable{
 
+
     USER_MESSAGE,
     PASSWORD_MESSAGE,
     CONNECTION_ACCEPTED,
@@ -22,5 +23,7 @@ public enum MessageCodes implements Serializable{
     I_AM_READY_TO_START,
     GET_DICE,
     DICE_RESULT,
-    INVALID_MOVE
+    INVALID_MOVE;
+
+    private static final long serialVersionUID = 52L;
 }
