@@ -1,7 +1,6 @@
 package com.ea.ja.server.socket;
 
-import com.ea.ja.server.DAO.DAO;
-import com.ea.ja.server.DAO.DAOImpl;
+
 import com.ea.ja.server.gui.GUI;
 
 /**

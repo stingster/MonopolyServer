@@ -35,7 +35,7 @@ public final class Server implements Runnable {
     private static Vector<SerializablePlayer> serializablePlayers = new Vector<>();
 
     /**
-     * @author achesnoiu
+     *
      * private constructor for respecting the
      * singleton pattern
      */
@@ -44,7 +44,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * sets the requires clients number
      * @param requiredClients must be an integer in [2,8]
      * @throws Exception if requiredClient is not valid
@@ -56,7 +56,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * start the server
      * @see com.ea.ja.server.gui.GUI
      */
@@ -66,7 +66,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * sets the listening port
      * @param listeningPort must be an integer between 8000 and 9999
      */
@@ -77,7 +77,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * stops the server, and exista the application
      */
     public static void stopServer(){
@@ -87,7 +87,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * generates serializable vector with all the current connected players
      */
     private static void generateSerializablePlayerVector(){
@@ -96,7 +96,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * gives permission to turn to next player
      * @see Player
      */
@@ -112,7 +112,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * sends MessageCodes.GAME_READY_TO_START to all the connected players
      * sends NUMBER_OF_PLAYERS to all the connected players
      * sends CONNECTED_USERS_VECTOR to all the connected players
@@ -154,7 +154,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * informs all players, SIMULATANEOUS NOW(NO LATENCY), about username's player location's update
      * @param username username of the user
      * @param newPosition new position of the user
@@ -178,7 +178,7 @@ public final class Server implements Runnable {
     }
 
     /**
-     * @author achesnoiu
+     *
      * server thread run method
      */
     @Override
