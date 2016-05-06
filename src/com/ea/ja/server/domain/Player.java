@@ -223,7 +223,6 @@ public final class Player implements Runnable{
         try {
             while ((resp = (Message) objectInputStream.readObject()) != null) {
 				if(resp.getMessageCodes() == MessageCodes.USER_POSITION){
-//                  Business.dao.move(username,getPosition(),Dice.getLastDiceResult1()+Dice.getLastDiceResult2()) == null
                     if(Business.dao.move(username,getPosition(),Dice.getLastDiceResult1()+Dice.getLastDiceResult2()) == null) {
                         sendMessage(MessageCodes.INVALID_MOVE);
                         System.out.println(username + " a mutat aiurea.");

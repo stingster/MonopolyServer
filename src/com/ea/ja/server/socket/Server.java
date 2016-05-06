@@ -119,6 +119,7 @@ public final class Server implements Runnable {
      * sends YOUR_TURN to the first player connected only
      */
     private static void startGame(){
+        Business.dao.resetBoard();
         System.out.println("GAME STARTED");
         generateSerializablePlayerVector();
         for(Player player : clients) {
@@ -161,6 +162,7 @@ public final class Server implements Runnable {
      */
     synchronized public static void updateUserPostion(String username, int newPosition){
         System.out.println(username + " s-a mutat la pozitia " + newPosition);
+        Vector<Thread> threads = new Vector<>();
         for(Player player : clients){
             Thread sendThread = new Thread(() -> {
                 try {
@@ -169,9 +171,10 @@ public final class Server implements Runnable {
                     invalidRequestedCode.printStackTrace();
                 }
             });
-            sendThread.start();
+            threads.add(sendThread);
 //            player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username,newPosition));
         }
+        threads.forEach(Thread::start);
     }
 
     /**
