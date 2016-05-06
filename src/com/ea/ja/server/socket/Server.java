@@ -127,7 +127,7 @@ public final class Server implements Runnable {
             try {
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
                 player.sendMessage(MessageCodes.CONECTED_USERS_VECTOR, serializablePlayers);
-                player.sendMessage(MessageCodes.GAME_READY_TO_START, null);
+                player.sendMessage(MessageCodes.GAME_READY_TO_START);
             } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
                 invalidRequestedCode.printStackTrace();
             }
@@ -138,7 +138,7 @@ public final class Server implements Runnable {
                 try {
                     Thread.sleep(5000);
                     try {
-                        clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN,null);
+                        clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN);
                     } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
                         invalidRequestedCode.printStackTrace();
                     }

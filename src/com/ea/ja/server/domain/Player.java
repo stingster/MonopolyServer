@@ -169,7 +169,7 @@ public final class Player implements Runnable,Comparable<Player>{
      * @throws IOException
      */
     synchronized public void sendMessage(MessageCodes code) throws InvalidRequestedCode, IOException {
-        objectOutputStream.writeObject(new Message(code, null));
+        objectOutputStream.writeObject(new Message(code));
     }
 
     /**
