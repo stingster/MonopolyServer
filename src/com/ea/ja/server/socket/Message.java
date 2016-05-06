@@ -9,13 +9,11 @@ import java.util.Vector;
  * @version 1.0
  */
 
-public class Message implements Serializable{
+public final class Message implements Serializable{
 
     private static final long serialVersionUID = 42L;
     private MessageCodes messageCodes;
     private final Vector<Object> objectVector = new Vector<>();
-
-
 
     /**
      *
@@ -51,7 +49,6 @@ public class Message implements Serializable{
         setSerializableObject(serializableObject);
         setSerializableObject2(serializableObject2);
         setSerializableObject3(serializableObject3);
-
     }
 
     /**
@@ -72,7 +69,7 @@ public class Message implements Serializable{
      *
      * @return the requested object
      */
-    public Object getSerializableObject() {
+    synchronized public Object getSerializableObject() {
         return objectVector.firstElement();
     }
 
@@ -80,7 +77,7 @@ public class Message implements Serializable{
      * setter of the object
      * @param serializableObject the object
      */
-    private void setSerializableObject(Object serializableObject) {
+    synchronized private void setSerializableObject(Object serializableObject) {
         objectVector.add(serializableObject);
     }
 
@@ -88,7 +85,7 @@ public class Message implements Serializable{
      *
      * @return the requested object
      */
-    public Object getSerializableObject2() {
+    synchronized public Object getSerializableObject2() {
         return objectVector.elementAt(1);
     }
 
@@ -96,7 +93,7 @@ public class Message implements Serializable{
      * setter of the object
      * @param serializableObject2 the object
      */
-    private void setSerializableObject2(Object serializableObject2) {
+    synchronized private void setSerializableObject2(Object serializableObject2) {
         objectVector.add(serializableObject2);
     }
 
@@ -104,7 +101,7 @@ public class Message implements Serializable{
      *
      * @return the requested object
      */
-    public Object getSerializableObject3() {
+    synchronized public Object getSerializableObject3() {
         return objectVector.elementAt(2);
     }
 
@@ -112,7 +109,7 @@ public class Message implements Serializable{
      * setter of the object
      * @param serializableObject3 the object
      */
-    private void setSerializableObject3(Object serializableObject3) {
+    synchronized private void setSerializableObject3(Object serializableObject3) {
         objectVector.add(serializableObject3);
     }
 
@@ -120,7 +117,7 @@ public class Message implements Serializable{
      *
      * @return the requested object
      */
-    private Object getSerializableObject4() {
+    synchronized private Object getSerializableObject4() {
         return objectVector.elementAt(3);
     }
     /**
@@ -128,7 +125,7 @@ public class Message implements Serializable{
      * @param serializableObject4 the object
      */
 
-    private void setSerializableObject4(Object serializableObject4) {
+    synchronized private void setSerializableObject4(Object serializableObject4) {
         objectVector.add(serializableObject4);
     }
 
@@ -136,7 +133,7 @@ public class Message implements Serializable{
      * @author achesnoiu
      * @return messagecode
      */
-    public MessageCodes getMessageCodes() {
+    synchronized public MessageCodes getMessageCodes() {
         return messageCodes;
     }
 
@@ -145,7 +142,7 @@ public class Message implements Serializable{
      * @author achesnoiu
      * @param messageCodes MessageCode enum
      */
-    private void setMessageCodes(MessageCodes messageCodes) {
+    synchronized private void setMessageCodes(MessageCodes messageCodes) {
         this.messageCodes = messageCodes;
     }
 

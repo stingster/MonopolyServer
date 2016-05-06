@@ -16,7 +16,7 @@ import com.ea.ja.server.socket.InvalidRequestedCode;
 import com.ea.ja.server.socket.Server;
 
 
-public class Player implements Runnable{
+public final class Player implements Runnable{
 
 	private String username;
 	private String password;
@@ -72,11 +72,11 @@ public class Player implements Runnable{
 		this.password = password;
 	}
 
-	public int getPosition() {
+    synchronized public int getPosition() {
 		return position;
 	}
 
-	public void setPosition(int position) {
+    synchronized public void setPosition(int position) {
 		this.position = position;
 	}
 
@@ -168,7 +168,7 @@ public class Player implements Runnable{
      * @throws InvalidRequestedCode
      * @throws IOException
      */
-    public void sendMessage(MessageCodes code) throws InvalidRequestedCode, IOException {
+    synchronized public void sendMessage(MessageCodes code) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(code, null));
     }
 
@@ -178,7 +178,7 @@ public class Player implements Runnable{
      * @throws InvalidRequestedCode
      * @throws IOException
      */
-    public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
+    synchronized public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(code, serializedObject));
     }
     /**
@@ -187,7 +187,7 @@ public class Player implements Runnable{
      * @throws InvalidRequestedCode
      * @throws IOException
      */
-    public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2) throws InvalidRequestedCode, IOException {
+    synchronized public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2));
     }
 
@@ -197,7 +197,7 @@ public class Player implements Runnable{
      * @throws InvalidRequestedCode
      * @throws IOException
      */
-    public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2, Object serializedObject3) throws InvalidRequestedCode, IOException {
+    synchronized public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2, Object serializedObject3) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2, serializedObject3));
     }
 
@@ -207,7 +207,7 @@ public class Player implements Runnable{
      * @throws InvalidRequestedCode
      * @throws IOException
      */
-    public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2, Object serializedObject3, Object serializedObject4) throws InvalidRequestedCode, IOException {
+    synchronized public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2, Object serializedObject3, Object serializedObject4) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2, serializedObject3, serializedObject4));
     }
 
@@ -223,7 +223,7 @@ public class Player implements Runnable{
         try {
             while ((resp = (Message) objectInputStream.readObject()) != null) {
 				if(resp.getMessageCodes() == MessageCodes.USER_POSITION){
-                    if(Business.dao.move(username,getPosition(),Dice.getDiceResult1()+Dice.getDiceResult2()) == null) {
+                    if(Business.dao.move(username,getPosition(),Dice.getLastDiceResult1()+Dice.getLastDiceResult2()) == null) {
                         sendMessage(MessageCodes.INVALID_MOVE);
                         System.out.println(username + " a mutat aiurea.");
                     }
@@ -239,8 +239,7 @@ public class Player implements Runnable{
                 if(resp.getMessageCodes() == MessageCodes.GET_DICE){
                     System.out.println("Zar trimis catre " + username);
                     sendMessage(MessageCodes.DICE_RESULT,Dice.getDiceResult1(),Dice.getDiceResult2());
-
-				}
+                }
             }
         }catch (SocketException e){
             System.out.println(username + " disconnected.");

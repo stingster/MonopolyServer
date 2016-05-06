@@ -10,7 +10,7 @@ public final class Dice {
     private static int lastDiceResult1Static;
     private static int lastDiceResult2Static;
 
-    public static int getLastDiceResult1() {
+    synchronized public static int getLastDiceResult1() {
         return lastDiceResult1Static;
     }
 
@@ -18,7 +18,7 @@ public final class Dice {
         Dice.lastDiceResult1Static = lastDiceResult1Static;
     }
 
-    public static int getLastDiceResult2() {
+    synchronized public static int getLastDiceResult2() {
         return lastDiceResult2Static;
     }
 
@@ -30,7 +30,7 @@ public final class Dice {
      *
      * @return result of dice 1
      */
-    public static int getDiceResult1(){
+    synchronized public static int getDiceResult1(){
         int result = (int)(Math.random() * 6) + 1;
         setLastDiceResult1(result);
         return result;
@@ -40,7 +40,7 @@ public final class Dice {
      *
      * @return result of dice 2
      */
-    public static int getDiceResult2(){
+    synchronized public static int getDiceResult2(){
         int result = (int)(Math.random() * 6) + 1;
         setLastDiceResult2(result);
         return result;

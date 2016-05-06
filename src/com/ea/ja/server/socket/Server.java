@@ -99,7 +99,7 @@ public final class Server implements Runnable {
      * gives permission to turn to next player
      * @see Player
      */
-    public static void nextPlayerTurn(){
+    synchronized public static void nextPlayerTurn(){
         System.out.println("NEXT PLAYER TURN");
         indexOfTheCurrentPlayerTurn++;
         indexOfTheCurrentPlayerTurn %= requiredClients;
@@ -153,12 +153,12 @@ public final class Server implements Runnable {
 
     /**
      * @author achesnoiu
-     * informs all players about username's player location's update
+     * informs all players, SIMULATANEOUS NOW(NO LATENCY), about username's player location's update
      * @param username username of the user
      * @param newPosition new position of the user
      * @see Player
      */
-    public static void updateUserPostion(String username, int newPosition){
+    synchronized public static void updateUserPostion(String username, int newPosition){
         System.out.println(username + " s-a mutat la pozitia " + newPosition);
         for(Player player : clients){
             Thread sendThread = new Thread(() -> {
