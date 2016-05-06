@@ -23,7 +23,7 @@ public class DAOImpl implements DAO {
 	{
 		dataSource = new BasicDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://localhost:3306/Monopoly");
+		dataSource.setUrl("jdbc:mysql://10.45.52.104:3306/Monopoly");
 		dataSource.setUsername("root");
 		dataSource.setPassword("");
 	}
