@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -179,41 +180,48 @@ public final class Server implements Runnable {
      */
     @Override
     public void run() {
+
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
+
+
             while (isRunning) {
                 System.out.println("Server listening for a new client");
-                Socket socket = serverSocket.accept();
-                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
-                String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
-                if(currentConnectedClients < requiredClients)
+                try {
+                    Socket socket = serverSocket.accept();
+                    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                    String username = (String) ((Message) objectInputStream.readObject()).getSerializableObject();
+                    String password = (String) ((Message) objectInputStream.readObject()).getSerializableObject();
+                    if (currentConnectedClients < requiredClients)
 //                  if(true){
-                    if (Business.dao.logIn(username, password) != null) {
-                        // if credentials are ok
-                        currentConnectedClients++;
-                        objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
-                        // ID TOKEN
-                        objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID,currentConnectedClients));
-                        System.out.println("TOKEN ID SENT TO " + username + ": " + currentConnectedClients);
-                        clients.add(new Player(username,socket,objectInputStream,objectOutputStream));
-                        clients.lastElement().setToken(currentConnectedClients);
-                        System.out.println(username + " connected.");
-                        if(currentConnectedClients == requiredClients)
-                            startGame();
-                    } else {
-                        objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
+                        if (Business.dao.logIn(username, password) != null) {
+                            // if credentials are ok
+                            currentConnectedClients++;
+                            objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
+                            // ID TOKEN
+                            objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID, currentConnectedClients));
+                            System.out.println("TOKEN ID SENT TO " + username + ": " + currentConnectedClients);
+                            clients.add(new Player(username, socket, objectInputStream, objectOutputStream));
+                            clients.lastElement().setToken(currentConnectedClients);
+                            System.out.println(username + " connected.");
+                            if (currentConnectedClients == requiredClients)
+                                startGame();
+                        } else {
+                            objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
+                            objectInputStream.close();
+                            objectOutputStream.close();
+                            System.out.println("Un user a incercat sa se conecteze cu parola gresita!");
+                            socket.close();
+                        }
+                    else {
+                        objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Maximum connexions reached."));
                         objectInputStream.close();
                         objectOutputStream.close();
-                        System.out.println("Un user a incercat sa se conecteze cu parola gresita!");
                         socket.close();
                     }
-                else{
-                    objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Maximum connexions reached."));
-                    objectInputStream.close();
-                    objectOutputStream.close();
-                    socket.close();
+                }catch (SocketException e){
+                    System.out.println("Unknown user disconected");
                 }
             }
         } catch (ClassNotFoundException e) {
