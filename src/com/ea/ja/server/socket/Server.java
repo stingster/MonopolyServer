@@ -180,11 +180,8 @@ public final class Server implements Runnable {
      */
     @Override
     public void run() {
-
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
-
-
             while (isRunning) {
                 System.out.println("Server listening for a new client");
                 try {
@@ -211,7 +208,7 @@ public final class Server implements Runnable {
                             objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
                             objectInputStream.close();
                             objectOutputStream.close();
-                            System.out.println("Un user a incercat sa se conecteze cu parola gresita!");
+                            System.out.println(username + " a incercat sa se conecteze cu parola gresita!");
                             socket.close();
                         }
                     else {
