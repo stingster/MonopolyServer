@@ -145,7 +145,4 @@ public final class Message implements Serializable{
     synchronized private void setMessageCodes(MessageCodes messageCodes) {
         this.messageCodes = messageCodes;
     }
-
-
-
 }
