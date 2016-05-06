@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public enum MessageCodes implements Serializable{
 
+    USER_MESSAGE,
+    PASSWORD_MESSAGE,
     CONNECTION_ACCEPTED,
     CONNECTION_REFUSED,
     CONECTED_USERS_VECTOR,
