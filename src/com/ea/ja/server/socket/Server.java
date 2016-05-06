@@ -120,9 +120,13 @@ public final class Server implements Runnable {
      * sends YOUR_TURN to the first player connected only
      */
     private static void startGame(){
+        generateSerializablePlayerVector();
+        System.out.println("Serializable Players:");
+        for(SerializablePlayer serializablePlayer : serializablePlayers)
+            System.out.println(serializablePlayer.getUsername());
         Business.dao.resetBoard();
         System.out.println("GAME STARTED");
-        generateSerializablePlayerVector();
+
         for(Player player : clients) {
             try {
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
@@ -165,15 +169,16 @@ public final class Server implements Runnable {
         System.out.println(username + " s-a mutat la pozitia " + newPosition);
         Vector<Thread> threads = new Vector<>();
         for(Player player : clients){
-            Thread sendThread = new Thread(() -> {
-                try {
-                    player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username, newPosition));
-                } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
-                    invalidRequestedCode.printStackTrace();
-                }
-            });
-            threads.add(sendThread);
-//            player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username,newPosition));
+            if(!player.getUsername().equals(username)){
+                Thread sendThread = new Thread(() -> {
+                    try {
+                        player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username, newPosition));
+                    } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
+                        invalidRequestedCode.printStackTrace();
+                    }
+                });
+                threads.add(sendThread);
+            }
         }
         threads.forEach(Thread::start);
     }
@@ -185,8 +190,11 @@ public final class Server implements Runnable {
     synchronized public static void userDisconnected(String username){
         int index = Collections.binarySearch(clients,new Player(username));
         System.out.println("Dissconected player " + username + " has index " + index);
-        if(index >= 0 && index < clients.size())
+        if(index >= 0 && index <= clients.size())
             clients.removeElementAt(index);
+        index = Collections.binarySearch(serializablePlayers,new SerializablePlayer(username,0),(a,b)-> a.getUsername().compareTo(b.getUsername()));
+        if(index >= 0 && index <= clients.size())
+            serializablePlayers.removeElementAt(index);
         currentConnectedClients--;
     }
 
@@ -197,7 +205,7 @@ public final class Server implements Runnable {
      */
     private boolean isUserConnected(String username){
         int index = Collections.binarySearch(clients,new Player(username));
-        return index >= 0 && index < clients.size();
+        return index >= 0;
     }
     /**
      *
