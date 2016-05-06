@@ -316,7 +316,6 @@ public class DAOImpl implements DAO {
 		try {
 			connection = getConnection();
 			if (verifyPosition(username, initialPosition)) {
-				System.out.println("A INTRAT PE VERIRY");
 				initialPosition = (initialPosition + dice) % 40;
 
 				sql = "UPDATE player SET position = ? WHERE username = ?";
@@ -356,9 +355,6 @@ public class DAOImpl implements DAO {
 			resultSet = pStatement.executeQuery();
 
 			while(resultSet.next()){
-				System.out.println("INTRA IN WHILE");
-				System.out.println("GETINT: " + resultSet.getInt(1));
-				System.out.println("INITIAL POS " + initialPosition);
 				if (resultSet != null && resultSet.getInt(1) == initialPosition) {
 					return true;
 				}
