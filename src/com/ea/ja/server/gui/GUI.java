@@ -1,9 +1,8 @@
 package com.ea.ja.server.gui;
-import com.ea.ja.server.socket.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -11,12 +10,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import com.ea.ja.server.socket.Server;
+
 public class GUI extends JFrame{
 	
 	JComboBox requiredNoOfClients;
 	JTextField port;
 	String s;
 	int numberOfClients;
+	KeyAdapter adapter;
+	JButton start;
 	
 	public GUI (){
 		super("Server");		
@@ -34,7 +37,7 @@ public class GUI extends JFrame{
 		requiredNoOfClients = new JComboBox<>(items);
 		JLabel portlb = new JLabel(" Port :   ");
 		JLabel clients = new JLabel(" Set minimum number of players  :   ");
-		JButton start = new JButton(" Start server ");
+		 start = new JButton(" Start server ");
 		JButton stop = new JButton(" Stop server");
 		
 		/**
@@ -64,6 +67,8 @@ public class GUI extends JFrame{
 		 * Stop Server
 		 */
 		stop.addActionListener(e -> Server.stopServer());
+		
+		
 		
 		
 		
@@ -112,6 +117,18 @@ public class GUI extends JFrame{
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+	
+	
+	public void createAdapter(){
+			adapter = new KeyAdapter() {
+						public void keyReleased(KeyEvent e) {
+							if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+								start.doClick();
+							}
+						}
+					}; 
+
 	}
 
 }
