@@ -10,9 +10,8 @@ import java.util.List;
 import com.ea.ja.server.socket.*;
 
 import com.ea.ja.server.socket.InvalidRequestedCode;
-import com.ea.ja.server.socket.*;
 import com.ea.ja.server.socket.Server;
-import com.sun.corba.se.spi.activation.*;
+
 
 public class Player implements Runnable{
 
@@ -36,7 +35,15 @@ public class Player implements Runnable{
 		this.username = username;
 		this.password = password;
 	}
-	
+
+    /**
+     * overloaded constructor
+     * @author achesnoiu
+     * @param username username
+     * @param socket client socket
+     * @param objectInputStream client in stream
+     * @param objectOutputStream client out stream
+     */
     public Player(String username, Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) {
         this.username = username;
         this.socket = socket;
@@ -150,12 +157,52 @@ public class Player implements Runnable{
 		} else if (!username.equals(other.username))
 			return false;
 		return true;
-	}
-
-	public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
-        objectOutputStream.writeObject(new Message(code, serializedObject));
     }
 
+    /**
+     * overloaded sendMessage functions
+     * @author achesnoiu
+     * @throws InvalidRequestedCode
+     * @throws IOException
+     */
+    public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
+        objectOutputStream.writeObject(new Message(code, serializedObject));
+    }
+    /**
+     * overloaded sendMessage functions
+     * @author achesnoiu
+     * @throws InvalidRequestedCode
+     * @throws IOException
+     */
+    public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2) throws InvalidRequestedCode, IOException {
+        objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2));
+    }
+
+    /**
+     * overloaded sendMessage functions
+     * @author achesnoiu
+     * @throws InvalidRequestedCode
+     * @throws IOException
+     */
+    public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2, Object serializedObject3) throws InvalidRequestedCode, IOException {
+        objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2, serializedObject3));
+    }
+
+    /**
+     * overloaded sendMessage functions
+     * @author achesnoiu
+     * @throws InvalidRequestedCode
+     * @throws IOException
+     */
+    public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2, Object serializedObject3, Object serializedObject4) throws InvalidRequestedCode, IOException {
+        objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2, serializedObject3, serializedObject4));
+    }
+
+
+    /**
+     * player waiting thread
+     * @author achesnoiu
+     */
     @Override
     public void run() {
         // asteptare mesaje de la client
@@ -166,16 +213,18 @@ public class Player implements Runnable{
 					setPosition((Integer)resp.getSerializableObject());
 					Server.updateUserPostion(getUsername(),getPosition());
 				}
-				if(resp.getMessageCodes() == MessageCodes.USER_END_TURN)
+
+                if(resp.getMessageCodes() == MessageCodes.USER_END_TURN)
 					Server.nextPlayerTurn();
 
-			}
+                if(resp.getMessageCodes() == MessageCodes.GET_DICE){
+                    System.out.println("Zar trimis catre " + username);
+                    sendMessage(MessageCodes.DICE_RESULT,Dice.getDiceResult1(),Dice.getDiceResult2());
+				}
+            }
         }catch (SocketException e){
             System.out.println(username + " disconnected.");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | InvalidRequestedCode e) {
             e.printStackTrace();
         }
 
