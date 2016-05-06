@@ -220,6 +220,7 @@ public class Player implements Runnable{
                 if(resp.getMessageCodes() == MessageCodes.GET_DICE){
                     System.out.println("Zar trimis catre " + username);
                     sendMessage(MessageCodes.DICE_RESULT,Dice.getDiceResult1(),Dice.getDiceResult2());
+
 				}
             }
         }catch (SocketException e){
