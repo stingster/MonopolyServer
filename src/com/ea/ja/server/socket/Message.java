@@ -125,7 +125,7 @@ public final class Message implements Serializable{
      * @param serializableObject4 the object
      */
 
-    synchronized private void setSerializableObject4(Object serializableObject4) {
+    synchronized public void setSerializableObject4(Object serializableObject4) {
         objectVector.add(serializableObject4);
     }
 
