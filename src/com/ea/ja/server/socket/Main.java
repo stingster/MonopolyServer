@@ -10,7 +10,7 @@ import com.ea.ja.server.gui.GUI;
 public class Main {
 
     public static void main(String[] args){
-        System.out.println("test");
+
         // adaugat comentariu in main
         new GUI();
     }

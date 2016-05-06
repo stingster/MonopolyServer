@@ -20,7 +20,7 @@ public final class Player implements Runnable{
 
 	private String username;
 	private String password;
-	private int position;
+	private int position = 0;
 	private int token;
 	private int money;
 	private List<Commodity> commodities = new ArrayList<>();
@@ -223,7 +223,8 @@ public final class Player implements Runnable{
         try {
             while ((resp = (Message) objectInputStream.readObject()) != null) {
 				if(resp.getMessageCodes() == MessageCodes.USER_POSITION){
-                    if(Business.dao.move(username,getPosition(),Dice.getLastDiceResult1()+Dice.getLastDiceResult2()) == null) {
+//                    Business.dao.move(username,getPosition(),Dice.getLastDiceResult1()+Dice.getLastDiceResult2()) == null
+                    if(false) {
                         sendMessage(MessageCodes.INVALID_MOVE);
                         System.out.println(username + " a mutat aiurea.");
                     }

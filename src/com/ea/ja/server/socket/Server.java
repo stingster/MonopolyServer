@@ -432,6 +432,7 @@ public final class Server implements Runnable {
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
                         objectInputStream.close();
                         objectOutputStream.close();
+                        System.out.println("Un user a incercat sa se conecteze cu parola gresita!");
                         socket.close();
                     }
                 else{

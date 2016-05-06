@@ -353,6 +353,7 @@ public class DAOImpl implements DAO {
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, username);
 			resultSet = pStatement.executeQuery();
+			System.out.println(resultSet.getInt(0));
 			if (resultSet != null && resultSet.getInt(0) == initialPosition) {
 				return true;
 			}
