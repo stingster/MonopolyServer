@@ -106,7 +106,7 @@ public final class Server implements Runnable {
         indexOfTheCurrentPlayerTurn++;
         indexOfTheCurrentPlayerTurn %= requiredClients;
         try {
-            clients.elementAt(indexOfTheCurrentPlayerTurn).sendMessage(MessageCodes.YOUR_TURN, null);
+            clients.elementAt(indexOfTheCurrentPlayerTurn).sendMessage(MessageCodes.YOUR_TURN);
         } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
             invalidRequestedCode.printStackTrace();
         }
