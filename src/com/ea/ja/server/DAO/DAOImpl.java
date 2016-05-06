@@ -126,9 +126,7 @@ public class DAOImpl implements DAO {
 	public synchronized Player move(String username, int initialPosition, int dice) {
 
 		try {
-			
 			connection = getConnection();
-
 			if (verifyPosition(username, initialPosition)) {
 
 				initialPosition = (initialPosition + dice) % 40;
