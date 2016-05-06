@@ -15,9 +15,19 @@ public final class Message implements Serializable{
     private MessageCodes messageCodes;
     private final Vector<Object> objectVector = new Vector<>();
 
+
     /**
      *
-     * @param messageCodes integer between 0 and NaN
+     * @param messageCodes MessageCodes enum
+     * @throws InvalidRequestedCode if the requested code is invalid
+     */
+    public Message(MessageCodes messageCodes) throws InvalidRequestedCode {
+        this.messageCodes = messageCodes;
+    }
+
+    /**
+     *
+     * @param messageCodes MessageCodes enum
      * @param serializableObject serializable object, respecting the contract of codes
      * @throws InvalidRequestedCode if the requested code is invalid
      */
@@ -28,7 +38,7 @@ public final class Message implements Serializable{
 
     /**
      *
-     * @param messageCodes integer between 0 and NaN
+     * @param messageCodes MessageCodes enum
      * @param serializableObject serializable object, respecting the contract of codes
      * @throws InvalidRequestedCode if the requested code is invalid
      */
@@ -40,7 +50,7 @@ public final class Message implements Serializable{
 
     /**
      *
-     * @param messageCodes integer between 0 and NaN
+     * @param messageCodes MessageCodes enum
      * @param serializableObject serializable object, respecting the contract of codes
      * @throws InvalidRequestedCode if the requested code is invalid
      */
@@ -53,7 +63,7 @@ public final class Message implements Serializable{
 
     /**
      *
-     * @param messageCodes integer between 0 and NaN
+     * @param messageCodes MessageCodes enum
      * @param serializableObject serializable object, respecting the contract of codes
      * @throws InvalidRequestedCode if the requested code is invalid
      */

@@ -182,13 +182,23 @@ public final class Server implements Runnable {
      * removes disconnected username from clients vector
      * @param username username of the dissconected client
      */
-    public static void userDisconnected(String username){
+    synchronized public static void userDisconnected(String username){
         int index = Collections.binarySearch(clients,new Player(username));
         System.out.println("Dissconected player " + username + " has index " + index);
         if(index >= 0 && index < clients.size())
             clients.removeElementAt(index);
+        currentConnectedClients--;
     }
 
+    /**
+     * checks if username is already connected
+     * @param username username
+     * @return true | false
+     */
+    private boolean isUserConnected(String username){
+        int index = Collections.binarySearch(clients,new Player(username));
+        return index >= 0 && index < clients.size();
+    }
     /**
      *
      * server thread run method
@@ -206,24 +216,30 @@ public final class Server implements Runnable {
                     String username = (String) ((Message) objectInputStream.readObject()).getSerializableObject();
                     String password = (String) ((Message) objectInputStream.readObject()).getSerializableObject();
                     if (currentConnectedClients < requiredClients)
-//                  if(true){
-                        if (Business.dao.logIn(username, password) != null) {
-                            // if credentials are ok
-                            currentConnectedClients++;
-                            objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));
-                            // ID TOKEN
-                            objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID, currentConnectedClients));
-                            System.out.println("TOKEN ID SENT TO " + username + ": " + currentConnectedClients);
-                            clients.add(new Player(username, socket, objectInputStream, objectOutputStream));
-                            clients.lastElement().setToken(currentConnectedClients);
-                            System.out.println(username + " connected.");
-                            if (currentConnectedClients == requiredClients)
-                                startGame();
-                        } else {
-                            objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
+                        if(!isUserConnected(username))
+                            if (Business.dao.logIn(username, password) != null) {
+                                // if credentials are ok
+                                currentConnectedClients++;
+                                objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "Connected. Wait for other clients!"));
+                                // ID TOKEN
+                                objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID, currentConnectedClients));
+                                System.out.println("TOKEN ID SENT TO " + username + ": " + currentConnectedClients);
+                                clients.add(new Player(username, socket, objectInputStream, objectOutputStream));
+                                clients.lastElement().setToken(currentConnectedClients);
+                                System.out.println(username + " connected.");
+                                if (currentConnectedClients == requiredClients)
+                                    startGame();
+                            } else {
+                                objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
+                                objectInputStream.close();
+                                objectOutputStream.close();
+                                System.out.println(username + " a incercat sa se conecteze cu parola gresita!");
+                                socket.close();
+                            }
+                        else{
+                            objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username is already connected!"));
                             objectInputStream.close();
                             objectOutputStream.close();
-                            System.out.println(username + " a incercat sa se conecteze cu parola gresita!");
                             socket.close();
                         }
                     else {
