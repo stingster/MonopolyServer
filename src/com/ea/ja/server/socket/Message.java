@@ -15,6 +15,8 @@ public class Message implements Serializable{
     private MessageCodes messageCodes;
     private final Vector<Object> objectVector = new Vector<>();
 
+
+
     /**
      *
      * @param messageCodes integer between 0 and NaN

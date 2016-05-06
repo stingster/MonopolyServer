@@ -1,5 +1,6 @@
 package com.ea.ja.server.socket;
 
+import com.ea.ja.server.DAO.Business;
 import com.ea.ja.server.domain.Player;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -188,8 +189,8 @@ public final class Server implements Runnable {
                 String username = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 String password = (String) ((Message)objectInputStream.readObject()).getSerializableObject();
                 if(currentConnectedClients < requiredClients)
-                  if(true){
-//                    if (Business.dao.logIn(username, password) != null) {
+//                  if(true){
+                    if (Business.dao.logIn(username, password) != null) {
                         // if credentials are ok
                         currentConnectedClients++;
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "You have connected."));

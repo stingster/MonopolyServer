@@ -7,6 +7,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.ea.ja.server.DAO.Business;
+import com.ea.ja.server.DAO.DAO;
 import com.ea.ja.server.socket.*;
 
 import com.ea.ja.server.socket.InvalidRequestedCode;
@@ -165,6 +168,16 @@ public class Player implements Runnable{
      * @throws InvalidRequestedCode
      * @throws IOException
      */
+    public void sendMessage(MessageCodes code) throws InvalidRequestedCode, IOException {
+        objectOutputStream.writeObject(new Message(code, null));
+    }
+
+    /**
+     * overloaded sendMessage functions
+     * @author achesnoiu
+     * @throws InvalidRequestedCode
+     * @throws IOException
+     */
     public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(code, serializedObject));
     }
@@ -210,8 +223,14 @@ public class Player implements Runnable{
         try {
             while ((resp = (Message) objectInputStream.readObject()) != null) {
 				if(resp.getMessageCodes() == MessageCodes.USER_POSITION){
-					setPosition((Integer)resp.getSerializableObject());
-					Server.updateUserPostion(getUsername(),getPosition());
+                    if(Business.dao.move(username,getPosition(),Dice.getDiceResult1()+Dice.getDiceResult2()) == null) {
+                        sendMessage(MessageCodes.INVALID_MOVE);
+                        System.out.println(username + " a mutat aiurea.");
+                    }
+                    else {
+                        setPosition((Integer) resp.getSerializableObject());
+                        Server.updateUserPostion(getUsername(), getPosition());
+                    }
 				}
 
                 if(resp.getMessageCodes() == MessageCodes.USER_END_TURN)
