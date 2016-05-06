@@ -312,22 +312,23 @@ public class DAOImpl implements DAO {
 
 	@Override
 	public synchronized Player move(String username, int initialPosition, int dice) {
-
+		System.out.println(username + " incearca sa se mute de la " + initialPosition + " cu " + dice + " pozitii.");
 		try {
 			connection = getConnection();
 			if (verifyPosition(username, initialPosition)) {
-
+				System.out.println("A INTRAT PE VERIRY");
 				initialPosition = (initialPosition + dice) % 40;
-				sql = "UPDATE player SET position = ? WHERE username = ?";
 
+				sql = "UPDATE player SET position = ? WHERE username = ?";
+				pStatement = connection.prepareStatement(sql);
 				pStatement.setInt(1, initialPosition);
 				pStatement.setString(2, username);
 				pStatement.executeUpdate();
 
+				sql = "SELECT * FROM player WHERE username = ?;";
+				pStatement = connection.prepareStatement(sql);
 				pStatement.setString(1, username);
 				resultSet = pStatement.executeQuery();
-
-				sql = "SELECT * FROM player WHERE username = ?;";
 
 				Player player = new Player(resultSet.getString("username"));
 				player.setPosition(resultSet.getInt("position"));
@@ -353,9 +354,14 @@ public class DAOImpl implements DAO {
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, username);
 			resultSet = pStatement.executeQuery();
-			System.out.println(resultSet.getInt(0));
-			if (resultSet != null && resultSet.getInt(0) == initialPosition) {
-				return true;
+
+			while(resultSet.next()){
+				System.out.println("INTRA IN WHILE");
+				System.out.println("GETINT: " + resultSet.getInt(1));
+				System.out.println("INITIAL POS " + initialPosition);
+				if (resultSet != null && resultSet.getInt(1) == initialPosition) {
+					return true;
+				}
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
