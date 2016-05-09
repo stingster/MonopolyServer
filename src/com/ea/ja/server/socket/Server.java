@@ -190,10 +190,10 @@ public final class Server implements Runnable {
     synchronized public static void userDisconnected(String username){
         int index = Collections.binarySearch(clients,new Player(username));
         System.out.println("Dissconected player " + username + " has index " + index);
-        if(index >= 0 && index <= clients.size())
+        if(index >= 0)
             clients.removeElementAt(index);
         index = Collections.binarySearch(serializablePlayers,new SerializablePlayer(username,0),(a,b)-> a.getUsername().compareTo(b.getUsername()));
-        if(index >= 0 && index <= clients.size())
+        if(index >= 0)
             serializablePlayers.removeElementAt(index);
         currentConnectedClients--;
     }
