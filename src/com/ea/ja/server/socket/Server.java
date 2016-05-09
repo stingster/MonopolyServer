@@ -119,7 +119,7 @@ public final class Server implements Runnable {
      * @see Player
      */
     synchronized public static void nextPlayerTurn(){
-        System.out.println("NEXT PLAYER TURN");
+        System.out.println("NEXT PLAYER MOVE NOW");
         indexOfTheCurrentPlayerTurn++;
         indexOfTheCurrentPlayerTurn %= requiredClients;
         try {
@@ -143,7 +143,7 @@ public final class Server implements Runnable {
         // console
         System.out.println("Serializable Players:");
         for(SerializablePlayer serializablePlayer : serializablePlayers)
-            System.out.println(serializablePlayer.getUsername());
+            System.out.print(serializablePlayer.getUsername() + ", ");
 
         // reset all players positions in DB
         Business.dao.resetBoard();
@@ -321,6 +321,9 @@ public final class Server implements Runnable {
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             while (isRunning) {
+                System.out.println("Listening port: " + LISTENING_PORT);
+                System.out.println("Clients required: " + requiredClients);
+                System.out.println("Connected clients: " + (currentConnectedClients == 0 ? "No clients." : currentConnectedClients));
                 System.out.println("Server listening for a new client...");
                 try {
                     // creates the socket and gets credentials

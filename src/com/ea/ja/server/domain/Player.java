@@ -235,7 +235,7 @@ public final class Player implements Runnable,Comparable<Player>{
 				if(resp.getMessageCodes() == MessageCodes.USER_POSITION){
                     if(Business.dao.move(username,getPosition(),Dice.getLastDiceResult1() + Dice.getLastDiceResult2()) == null) {
                         sendMessage(MessageCodes.INVALID_MOVE);
-                        System.out.println(username + " a mutat aiurea.");
+                        System.out.println(username + " tried to do a wrong move.");
                     }
                     else {
                         setPosition((Integer) resp.getSerializableObject());
@@ -247,9 +247,9 @@ public final class Player implements Runnable,Comparable<Player>{
                     Server.nextPlayerTurn();
                 else
                 if(resp.getMessageCodes() == MessageCodes.GET_DICE){
-                    System.out.println("Zar trimis catre " + username);
                     sendMessage(MessageCodes.DICE_RESULT,Dice.getDiceResult1(),Dice.getDiceResult2());
                     Server.updateDiceValues(Dice.getLastDiceResult1(),Dice.getLastDiceResult2());
+                    System.out.println("Dice sent to " + username + ": " + Dice.getLastDiceResult1() + " | " + Dice.getLastDiceResult2());
                 }
             }
         }catch (SocketException e){
