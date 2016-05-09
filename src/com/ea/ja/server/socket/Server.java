@@ -96,7 +96,7 @@ public final class Server implements Runnable {
 
     /**
      *
-     * stops the server, and exista the application
+     * stops the server, and exists the application
      */
     public static void stopServer(){
         isRunning = false;
@@ -189,7 +189,7 @@ public final class Server implements Runnable {
 
     /**
      *
-     * informs all players, SIMULATANEOUS NOW(NO LATENCY), about username's player location's update
+     * informs all players, SIMULTANEOUS NOW(NO LATENCY), about username's player location's update
      * @param username username of the user
      * @param newPosition new position of the user
      * @see Player
@@ -220,7 +220,7 @@ public final class Server implements Runnable {
 
     /**
      * removes disconnected username from clients vector
-     * @param username username of the dissconected client
+     * @param username username of the disconnected client
      */
     synchronized public static void onUserDisconnect(String username){
         // gets player's index in clients
