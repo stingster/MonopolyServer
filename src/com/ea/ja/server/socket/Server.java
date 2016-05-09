@@ -189,7 +189,6 @@ public final class Server implements Runnable {
             }
         }
 
-
         // CONSOLE
         System.out.println("GAME HAS BEEN STARTED");
     }
