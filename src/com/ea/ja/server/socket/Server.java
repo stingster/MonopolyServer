@@ -184,7 +184,7 @@ public final class Server implements Runnable {
         }
 
         // CONSOLE
-        System.out.println("GAME STARTED");
+        System.out.println("GAME HAS BEEN STARTED");
     }
 
     /**
@@ -230,6 +230,7 @@ public final class Server implements Runnable {
             } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
                 invalidRequestedCode.printStackTrace();
             }
+        System.out.println("Dice values (" + diceResult1 + "|" + diceResult2 + ") updated.");
     }
 
     /**
@@ -310,6 +311,7 @@ public final class Server implements Runnable {
     private static void rejectPlayer(String reason, Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) throws InvalidRequestedCode, IOException {
         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, reason));
         closeResources(socket,objectInputStream,objectOutputStream);
+        System.out.println("A player has been rejected! Reason: " + reason);
     }
 
     /**
