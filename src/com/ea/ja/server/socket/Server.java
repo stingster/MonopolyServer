@@ -8,8 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Collections;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +33,15 @@ public final class Server implements Runnable {
     private static Thread thread;
     private static Vector<Player> clients = new Vector<>();
     private static Vector<SerializablePlayer> serializablePlayers = new Vector<>();
+    private static Stack<Integer> tokenIds = new Stack<>();
+
+    /**
+     * static initializer for tokenIds
+     */
+    static{
+        for(int i = 1; i <= 8; i++)
+            tokenIds.add(i);
+    }
 
     /**
      *
@@ -188,14 +196,28 @@ public final class Server implements Runnable {
      * @param username username of the dissconected client
      */
     synchronized public static void userDisconnected(String username){
-        int index = Collections.binarySearch(clients,new Player(username));
+        int index = 0;
+        for(Player player : clients)
+            if(!Objects.equals(player.getUsername(), username))
+                index++;
+            else
+                break;
         System.out.println("Dissconected player " + username + " has index " + index);
-        if(index >= 0)
+        if(index >= 0) {
+            tokenIds.add(clients.elementAt(index).getToken());
             clients.removeElementAt(index);
-        index = Collections.binarySearch(serializablePlayers,new SerializablePlayer(username,0),(a,b)-> a.getUsername().compareTo(b.getUsername()));
-        if(index >= 0)
+        }
+        index = 0;
+        for(SerializablePlayer player : serializablePlayers)
+            if(!Objects.equals(player.getUsername(), username))
+                index++;
+            else
+                break;
+
+        if(index >= 0 && serializablePlayers.size() != 0)
             serializablePlayers.removeElementAt(index);
         currentConnectedClients--;
+
     }
 
     /**
@@ -226,14 +248,13 @@ public final class Server implements Runnable {
                     if (currentConnectedClients < requiredClients)
                         if(!isUserConnected(username))
                             if (Business.dao.logIn(username, password) != null) {
-                                // if credentials are ok
+                                int tokenId = tokenIds.pop();
                                 currentConnectedClients++;
                                 objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "Connected. Wait for other clients!"));
-                                // ID TOKEN
-                                objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID, currentConnectedClients));
-                                System.out.println("TOKEN ID SENT TO " + username + ": " + currentConnectedClients);
+                                objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID, tokenId));
+                                System.out.println("TOKEN ID SENT TO " + username + ": " + tokenId);
                                 clients.add(new Player(username, socket, objectInputStream, objectOutputStream));
-                                clients.lastElement().setToken(currentConnectedClients);
+                                clients.lastElement().setToken(tokenId);
                                 System.out.println(username + " connected.");
                                 if (currentConnectedClients == requiredClients)
                                     startGame();
@@ -258,15 +279,15 @@ public final class Server implements Runnable {
                     }
                 }catch (SocketException e){
                     System.out.println("Unknown user disconected");
+                }catch (ClassNotFoundException e) {
+                    System.out.println("Class not found exception.");
+                    e.printStackTrace();
+                }catch (InvalidRequestedCode invalidRequstedCode) {
+                    System.out.println("Invalid Requested Code");
+                    invalidRequstedCode.printStackTrace();
                 }
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("Class not found exception.");
-            e.printStackTrace();
-        } catch (InvalidRequestedCode invalidRequstedCode) {
-            System.out.println("Invalid Requested Code");
-            invalidRequstedCode.printStackTrace();
-        } catch (IOException e) {
+        }catch (IOException e) {
             System.out.println("IOException");
             e.printStackTrace();
         }
