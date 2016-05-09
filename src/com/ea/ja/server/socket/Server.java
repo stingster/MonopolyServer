@@ -8,7 +8,9 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Stack;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 /**
@@ -223,7 +225,7 @@ public final class Server implements Runnable {
         // gets player's index in clients
         int index = 0;
         for(Player player : clients)
-            if(!Objects.equals(player.getUsername(), username))
+            if(!player.getUsername().equals( username))
                 index++;
             else
                 break;
@@ -248,7 +250,7 @@ public final class Server implements Runnable {
         // search player in serializablePlayers
         index = 0;
         for(SerializablePlayer player : serializablePlayers)
-            if(!Objects.equals(player.getUsername(), username))
+            if(!player.getUsername().equals(username))
                 index++;
             else
                 break;
