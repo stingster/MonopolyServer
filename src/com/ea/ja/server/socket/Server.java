@@ -144,6 +144,7 @@ public final class Server implements Runnable {
         System.out.println("Serializable Players:");
         for(SerializablePlayer serializablePlayer : serializablePlayers)
             System.out.print(serializablePlayer.getUsername() + ", ");
+        System.out.println();
 
         // reset all players positions in DB
         Business.dao.resetBoard();
@@ -215,7 +216,7 @@ public final class Server implements Runnable {
         threads.forEach(Thread::start);
 
         // CONSOLE
-        System.out.println(username + " moved to position" + newPosition);
+        System.out.println(username + " moved to position " + newPosition);
     }
 
     /**
