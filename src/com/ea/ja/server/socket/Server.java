@@ -24,21 +24,30 @@ import java.util.stream.Collectors;
 
 public final class Server implements Runnable {
 
-    private static int LISTENING_PORT = 8080;
-    private static int requiredClients = 1;
+    private static int LISTENING_PORT;
+    private static int requiredClients;
     private static int indexOfTheCurrentPlayerTurn;
-    private static int currentConnectedClients = 0;
+    private static int currentConnectedClients;
     private static boolean isRunning;
-    private static Server server = new Server();
+    private static Server server;
     private static Thread thread;
-    private static Vector<Player> clients = new Vector<>();
-    private static Vector<SerializablePlayer> serializablePlayers = new Vector<>();
-    private static Stack<Integer> tokenIds = new Stack<>();
+    private static Vector<Player> clients;
+    private static Vector<SerializablePlayer> serializablePlayers;
+    private static Stack<Integer> tokenIds;
 
     /**
-     * static initializer for tokenIds
+     * static initializer
      */
     static{
+        LISTENING_PORT = 8080;
+        requiredClients = 1;
+        indexOfTheCurrentPlayerTurn = 0;
+        currentConnectedClients = 0;
+        isRunning = false;
+        server = new Server();
+        clients = new Vector<>();
+        serializablePlayers = new Vector<>();
+        tokenIds = new Stack<>();
         for(int i = 1; i <= 8; i++)
             tokenIds.add(i);
     }
@@ -99,7 +108,7 @@ public final class Server implements Runnable {
      *
      * generates serializable vector with all the current connected players
      */
-    private static void generateSerializablePlayerVector(){
+    private static void generateSerializablePlayersVector(){
         serializablePlayers.addAll(clients.stream().map(player -> new SerializablePlayer(player.getUsername(), player.getToken())).collect(Collectors.toList()));
         System.out.println("SerializablePlayer vector generated!");
     }
@@ -128,13 +137,18 @@ public final class Server implements Runnable {
      * sends YOUR_TURN to the first player connected only
      */
     private static void startGame(){
-        generateSerializablePlayerVector();
+        // generate serializablePlayers
+        generateSerializablePlayersVector();
+
+        // SOUT
         System.out.println("Serializable Players:");
         for(SerializablePlayer serializablePlayer : serializablePlayers)
             System.out.println(serializablePlayer.getUsername());
-        Business.dao.resetBoard();
-        System.out.println("GAME STARTED");
 
+        // reset all players positions in DB
+        Business.dao.resetBoard();
+
+        // SENDS VITAL INFORMATIONS TO ALL PLAYERS
         for(Player player : clients) {
             try {
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
@@ -144,10 +158,12 @@ public final class Server implements Runnable {
                 invalidRequestedCode.printStackTrace();
             }
         }
+
+        // GIVES FIRST PLAYER PERMISSION TO MOVE
         try {
-            // RANDUL PRIMULUI JUCATOR
             Thread thread = new Thread(()->{
                 try {
+                    // ALIN'S FAULT
                     Thread.sleep(5000);
                     try {
                         clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN);
@@ -160,10 +176,15 @@ public final class Server implements Runnable {
                 System.out.println(clients.elementAt(0).getUsername() + " a primit mesaj your turn.");
             });
             thread.start();
+
+            // SETS FIRST PLAYER TURN
             indexOfTheCurrentPlayerTurn = 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // SOUT
+        System.out.println("GAME STARTED");
     }
 
     /**
@@ -174,8 +195,10 @@ public final class Server implements Runnable {
      * @see Player
      */
     synchronized public static void updateUserPostion(String username, int newPosition){
-        System.out.println(username + " s-a mutat la pozitia " + newPosition);
+        // creats a vector of threads
         Vector<Thread> threads = new Vector<>();
+
+        // using a filter, creates a thread for every player, except USERNAME, that sends newPostion
         clients.stream().filter(player -> !player.getUsername().equals(username)).forEach(player -> {
             Thread sendThread = new Thread(() -> {
                 try {
@@ -186,14 +209,19 @@ public final class Server implements Runnable {
             });
             threads.add(sendThread);
         });
+
+        // starts all the created threads
         threads.forEach(Thread::start);
+
+        // SOUT
+        System.out.println(username + " s-a mutat la pozitia " + newPosition);
     }
 
     /**
      * removes disconnected username from clients vector
      * @param username username of the dissconected client
      */
-    synchronized public static void userDisconnected(String username){
+    synchronized public static void onUserDisconnect(String username){
         // gets player's index in clients
         int index = 0;
         for(Player player : clients)
@@ -203,6 +231,7 @@ public final class Server implements Runnable {
                 break;
         if(index >= 0) {
             Player player = clients.elementAt(index);
+
             // add the player's token back to the tokens stack
             tokenIds.add(player.getToken());
 
@@ -232,7 +261,6 @@ public final class Server implements Runnable {
 
         // updates currentConnectedClients number
         currentConnectedClients--;
-
     }
 
     /**
@@ -282,10 +310,13 @@ public final class Server implements Runnable {
                 try {
                     // creates the socket and gets credentials
                     Socket socket = serverSocket.accept();
+
                     ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
                     ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+
                     String username = (String) ((Message) objectInputStream.readObject()).getSerializableObject();
                     String password = (String) ((Message) objectInputStream.readObject()).getSerializableObject();
+
                     if (currentConnectedClients < requiredClients)
                         if(!isUserConnected(username))
                             if (Business.dao.logIn(username, password) != null) {

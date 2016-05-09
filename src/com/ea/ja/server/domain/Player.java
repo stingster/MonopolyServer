@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ea.ja.server.DAO.Business;
-import com.ea.ja.server.DAO.DAO;
 import com.ea.ja.server.socket.*;
 
 import com.ea.ja.server.socket.InvalidRequestedCode;
@@ -249,7 +248,7 @@ public final class Player implements Runnable,Comparable<Player>{
             }
         }catch (SocketException e){
             System.out.println(username + " disconnected.");
-            Server.userDisconnected(username);
+            Server.onUserDisconnect(username);
         } catch (IOException | ClassNotFoundException | InvalidRequestedCode e) {
             e.printStackTrace();
         }
