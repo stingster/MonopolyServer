@@ -152,7 +152,7 @@ public final class Server implements Runnable {
         for(Player player : clients) {
             try {
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
-                player.sendMessage(MessageCodes.CONECTED_USERS_VECTOR, serializablePlayers);
+                player.sendMessage(MessageCodes.CONNECTED_USERS_VECTOR, serializablePlayers);
                 player.sendMessage(MessageCodes.GAME_READY_TO_START);
             } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
                 invalidRequestedCode.printStackTrace();

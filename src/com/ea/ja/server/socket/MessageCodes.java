@@ -13,7 +13,7 @@ public enum MessageCodes implements Serializable{
     PASSWORD_MESSAGE,
     CONNECTION_ACCEPTED,
     CONNECTION_REFUSED,
-    CONECTED_USERS_VECTOR,
+    CONNECTED_USERS_VECTOR,
     GAME_READY_TO_START,
     USER_POSITION,
     USER_END_TURN,
@@ -23,7 +23,8 @@ public enum MessageCodes implements Serializable{
     I_AM_READY_TO_START,
     GET_DICE,
     DICE_RESULT,
-    INVALID_MOVE;
+    INVALID_MOVE,
+    DICE_CHANGED;
 
     private static final long serialVersionUID = 52L;
 }
