@@ -204,7 +204,13 @@ public final class Server implements Runnable {
                 break;
         System.out.println("Dissconected player " + username + " has index " + index);
         if(index >= 0) {
-            tokenIds.add(clients.elementAt(index).getToken());
+            Player player = clients.elementAt(index);
+            tokenIds.add(player.getToken());
+            try {
+                player.closeResources();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             clients.removeElementAt(index);
         }
         index = 0;
@@ -237,7 +243,7 @@ public final class Server implements Runnable {
      * @param objectOutputStream out ref
      * @throws IOException
      */
-    private static void closeResources(Socket socket,ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) throws IOException {
+    synchronized private static void closeResources(Socket socket,ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) throws IOException {
         socket.close();
         objectInputStream.close();
         objectOutputStream.close();

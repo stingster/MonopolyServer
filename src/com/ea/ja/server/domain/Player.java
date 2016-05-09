@@ -162,6 +162,13 @@ public final class Player implements Runnable,Comparable<Player>{
 		return true;
     }
 
+
+    public void closeResources() throws IOException {
+        objectInputStream.close();
+        objectOutputStream.close();
+        socket.close();
+    }
+
     /**
      * overloaded sendMessage functions
      * @author achesnoiu
@@ -218,12 +225,11 @@ public final class Player implements Runnable,Comparable<Player>{
      */
     @Override
     public void run() {
-        // asteptare mesaje de la client
         Message resp;
         try {
             while ((resp = (Message) objectInputStream.readObject()) != null) {
 				if(resp.getMessageCodes() == MessageCodes.USER_POSITION){
-                    if(Business.dao.move(username,getPosition(),Dice.getLastDiceResult1()+Dice.getLastDiceResult2()) == null) {
+                    if(Business.dao.move(username,getPosition(),Dice.getLastDiceResult1() + Dice.getLastDiceResult2()) == null) {
                         sendMessage(MessageCodes.INVALID_MOVE);
                         System.out.println(username + " a mutat aiurea.");
                     }
