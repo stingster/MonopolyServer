@@ -71,6 +71,8 @@ public final class Server implements Runnable {
         playersReadyToStart++;
         if(playersReadyToStart == requiredClients) {
             firstPlayerTurn();
+
+            // prepares for next game
             playersReadyToStart = 0;
         }
     }
