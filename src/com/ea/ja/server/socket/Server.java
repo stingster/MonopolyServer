@@ -54,7 +54,7 @@ public final class Server implements Runnable {
     /**
      *
      * private constructor for respecting the
-     * singleton pattern
+     * singleton pattern, preventing instantiation
      */
     private Server(){
     }
