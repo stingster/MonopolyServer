@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * running using Java Sockets
  * each client runs on a separate thread
  * all client sockets listens in the same time for requests
- * messages can be sent to all clients, publically or private
+ * messages can be sent to all clients, publicly or privately
  * @author achesnoiu
  * @version 1.0 (user story 1 FINAL)
  */
