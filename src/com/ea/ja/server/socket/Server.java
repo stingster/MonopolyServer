@@ -219,6 +219,20 @@ public final class Server implements Runnable {
     }
 
     /**
+     * sends current dice value to all the clients
+     * @param diceResult1 dice 1
+     * @param diceResult2 dice 2
+     */
+    synchronized public static void updateDiceValues(int diceResult1, int diceResult2){
+        for(Player player : clients)
+            try {
+                player.sendMessage(MessageCodes.DICE_CHANGED,diceResult1,diceResult2);
+            } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
+                invalidRequestedCode.printStackTrace();
+            }
+    }
+
+    /**
      * removes disconnected username from clients vector
      * @param username username of the disconnected client
      */
