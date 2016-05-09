@@ -243,11 +243,24 @@ public final class Server implements Runnable {
      * @param objectOutputStream out ref
      * @throws IOException
      */
-    synchronized private static void closeResources(Socket socket,ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) throws IOException {
+    private static void closeResources(Socket socket,ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) throws IOException {
         socket.close();
         objectInputStream.close();
         objectOutputStream.close();
     }
+
+    /**
+     * rejects the player
+     * @param reason reason
+     * @param socket socket
+     * @param objectInputStream in
+     * @param objectOutputStream out
+     */
+    private static void rejectPlayer(String reason, Socket socket, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) throws InvalidRequestedCode, IOException {
+        objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, reason));
+        closeResources(socket,objectInputStream,objectOutputStream);
+    }
+
 
     /**
      *
@@ -278,19 +291,12 @@ public final class Server implements Runnable {
                                 clients.lastElement().setToken(tokenId);
                                 if (currentConnectedClients == requiredClients)
                                     startGame();
-                            } else {
-                                objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
-                                closeResources(socket,objectInputStream,objectOutputStream);
-                                System.out.println(username + " a incercat sa se conecteze cu parola gresita!");
-                            }
-                        else{
-                            objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username is already connected!"));
-                            closeResources(socket,objectInputStream,objectOutputStream);
-                        }
-                    else{
-                        objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Maximum connexions reached."));
-                        closeResources(socket,objectInputStream,objectOutputStream);
-                    }
+                            } else
+                                rejectPlayer("Invalid credentials!", socket, objectInputStream, objectOutputStream);
+                        else
+                            rejectPlayer("Username already connected!", socket, objectInputStream, objectOutputStream);
+                    else
+                        rejectPlayer("Maximum connections reached!", socket, objectInputStream, objectOutputStream);
                 }catch (SocketException e){
                     System.out.println("Unknown user disconected");
                 }catch (ClassNotFoundException e) {
