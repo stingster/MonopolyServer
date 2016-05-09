@@ -31,10 +31,12 @@ public final class Server implements Runnable {
     private static int indexOfTheCurrentPlayerTurn;
     private static int currentConnectedClients;
     private static boolean isRunning;
+    private static int playersReadyToStart;
     private static Thread thread;
     private static Vector<Player> clients;
     private static Vector<SerializablePlayer> serializablePlayers;
     private static Stack<Integer> tokenIds;
+
 
     /**
      * static initializer
@@ -45,6 +47,7 @@ public final class Server implements Runnable {
         indexOfTheCurrentPlayerTurn = 0;
         currentConnectedClients = 0;
         isRunning = false;
+        playersReadyToStart = 0;
         clients = new Vector<>();
         serializablePlayers = new Vector<>();
         tokenIds = new Stack<>();
@@ -60,6 +63,18 @@ public final class Server implements Runnable {
      */
     private Server(){
     }
+
+    /**
+     *  player is ready to start method
+     */
+    synchronized public static void playerReadyToStart(){
+        playersReadyToStart++;
+        if(playersReadyToStart == requiredClients) {
+            firstPlayerTurn();
+            playersReadyToStart = 0;
+        }
+    }
+
 
     /**
      *
@@ -130,6 +145,18 @@ public final class Server implements Runnable {
     }
 
     /**
+     * gives first player permission to start
+     */
+    private static void firstPlayerTurn(){
+        try {
+            clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN);
+            System.out.println(clients.elementAt(0).getUsername() + " received next turn message.");
+        } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
+            invalidRequestedCode.printStackTrace();
+        }
+    }
+
+    /**
      *
      * sends MessageCodes.GAME_READY_TO_START to all the connected players
      * sends NUMBER_OF_PLAYERS to all the connected players
@@ -160,29 +187,6 @@ public final class Server implements Runnable {
             }
         }
 
-        // GIVES FIRST PLAYER PERMISSION TO MOVE
-        try {
-            Thread thread = new Thread(()->{
-                try {
-                    // GUI's FAULT
-                    Thread.sleep(5000);
-                    try {
-                        clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN);
-                    } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
-                        invalidRequestedCode.printStackTrace();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(clients.elementAt(0).getUsername() + " received next turn message.");
-            });
-            thread.start();
-
-            // SETS FIRST PLAYER TURN
-            indexOfTheCurrentPlayerTurn = 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         // CONSOLE
         System.out.println("GAME HAS BEEN STARTED");
@@ -321,10 +325,10 @@ public final class Server implements Runnable {
      */
     @Override
     public void run() {
+        System.out.println("Listening port: " + LISTENING_PORT);
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             while (isRunning) {
-                System.out.println("Listening port: " + LISTENING_PORT);
                 System.out.println("Clients required: " + requiredClients);
                 System.out.println("Connected clients: " + (currentConnectedClients == 0 ? "No clients." : currentConnectedClients));
                 System.out.println("Server listening for a new client...");

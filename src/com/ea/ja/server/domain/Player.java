@@ -251,6 +251,11 @@ public final class Player implements Runnable,Comparable<Player>{
                     Server.updateDiceValues(Dice.getLastDiceResult1(),Dice.getLastDiceResult2());
                     System.out.println("Dice sent to " + username + ": " + Dice.getLastDiceResult1() + " | " + Dice.getLastDiceResult2());
                 }
+                else
+                if(resp.getMessageCodes() == MessageCodes.I_AM_READY_TO_START){
+                    Server.playerReadyToStart();
+                    System.out.println(username + " is ready to start.");
+                }
             }
         }catch (SocketException e){
             System.out.println(username + " disconnected.");
