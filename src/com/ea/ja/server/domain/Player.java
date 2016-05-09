@@ -241,11 +241,11 @@ public final class Player implements Runnable,Comparable<Player>{
                         setPosition((Integer) resp.getSerializableObject());
                         Server.updateUserPosition(getUsername(), getPosition());
                     }
-				}
-
+                }
+                else
                 if(resp.getMessageCodes() == MessageCodes.USER_END_TURN)
-					Server.nextPlayerTurn();
-
+                    Server.nextPlayerTurn();
+                else
                 if(resp.getMessageCodes() == MessageCodes.GET_DICE){
                     System.out.println("Zar trimis catre " + username);
                     sendMessage(MessageCodes.DICE_RESULT,Dice.getDiceResult1(),Dice.getDiceResult2());
