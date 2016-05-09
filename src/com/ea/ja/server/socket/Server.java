@@ -29,7 +29,6 @@ public final class Server implements Runnable {
     private static int indexOfTheCurrentPlayerTurn;
     private static int currentConnectedClients;
     private static boolean isRunning;
-    private static Server server;
     private static Thread thread;
     private static Vector<Player> clients;
     private static Vector<SerializablePlayer> serializablePlayers;
@@ -44,10 +43,10 @@ public final class Server implements Runnable {
         indexOfTheCurrentPlayerTurn = 0;
         currentConnectedClients = 0;
         isRunning = false;
-        server = new Server();
         clients = new Vector<>();
         serializablePlayers = new Vector<>();
         tokenIds = new Stack<>();
+        thread = new Thread(new Server());
         for(int i = 1; i <= 8; i++)
             tokenIds.add(i);
     }
@@ -58,7 +57,6 @@ public final class Server implements Runnable {
      * singleton pattern
      */
     private Server(){
-        thread = new Thread(this);
     }
 
     /**
@@ -268,7 +266,7 @@ public final class Server implements Runnable {
      * @param username username
      * @return true | false
      */
-    private boolean isUserConnected(String username){
+    private static boolean isUserConnected(String username){
         return Collections.binarySearch(clients,new Player(username)) >= 0;
     }
 
