@@ -194,7 +194,7 @@ public final class Server implements Runnable {
      * @param newPosition new position of the user
      * @see Player
      */
-    synchronized public static void updateUserPostion(String username, int newPosition){
+    synchronized public static void updateUserPosition(String username, int newPosition){
         // creats a vector of threads
         Vector<Thread> threads = new Vector<>();
 
@@ -202,6 +202,7 @@ public final class Server implements Runnable {
         clients.stream().filter(player -> !player.getUsername().equals(username)).forEach(player -> {
             Thread sendThread = new Thread(() -> {
                 try {
+                    // sends the message
                     player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username, newPosition));
                 } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
                     invalidRequestedCode.printStackTrace();

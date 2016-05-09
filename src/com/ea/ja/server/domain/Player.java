@@ -234,7 +234,7 @@ public final class Player implements Runnable,Comparable<Player>{
                     }
                     else {
                         setPosition((Integer) resp.getSerializableObject());
-                        Server.updateUserPostion(getUsername(), getPosition());
+                        Server.updateUserPosition(getUsername(), getPosition());
                     }
 				}
 
