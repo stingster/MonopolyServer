@@ -140,7 +140,7 @@ public final class Server implements Runnable {
         // generate serializablePlayers
         generateSerializablePlayersVector();
 
-        // SOUT
+        // console
         System.out.println("Serializable Players:");
         for(SerializablePlayer serializablePlayer : serializablePlayers)
             System.out.println(serializablePlayer.getUsername());
@@ -148,7 +148,7 @@ public final class Server implements Runnable {
         // reset all players positions in DB
         Business.dao.resetBoard();
 
-        // SENDS VITAL INFORMATIONS TO ALL PLAYERS
+        // SENDS VITAL INFORMATION TO ALL PLAYERS
         for(Player player : clients) {
             try {
                 player.sendMessage(MessageCodes.NUMBER_OF_PLAYERS, requiredClients);
@@ -163,7 +163,7 @@ public final class Server implements Runnable {
         try {
             Thread thread = new Thread(()->{
                 try {
-                    // ALIN'S FAULT
+                    // GUI's FAULT
                     Thread.sleep(5000);
                     try {
                         clients.elementAt(0).sendMessage(MessageCodes.YOUR_TURN);
@@ -173,7 +173,7 @@ public final class Server implements Runnable {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println(clients.elementAt(0).getUsername() + " a primit mesaj your turn.");
+                System.out.println(clients.elementAt(0).getUsername() + " received next turn message.");
             });
             thread.start();
 
@@ -183,7 +183,7 @@ public final class Server implements Runnable {
             e.printStackTrace();
         }
 
-        // SOUT
+        // CONSOLE
         System.out.println("GAME STARTED");
     }
 
@@ -195,10 +195,10 @@ public final class Server implements Runnable {
      * @see Player
      */
     synchronized public static void updateUserPosition(String username, int newPosition){
-        // creats a vector of threads
+        // creates a vector of threads
         Vector<Thread> threads = new Vector<>();
 
-        // using a filter, creates a thread for every player, except USERNAME, that sends newPostion
+        // using a filter, creates a thread for every player, except USERNAME, that sends newPosition
         clients.stream().filter(player -> !player.getUsername().equals(username)).forEach(player -> {
             Thread sendThread = new Thread(() -> {
                 try {
@@ -214,8 +214,8 @@ public final class Server implements Runnable {
         // starts all the created threads
         threads.forEach(Thread::start);
 
-        // SOUT
-        System.out.println(username + " s-a mutat la pozitia " + newPosition);
+        // CONSOLE
+        System.out.println(username + " moved to position" + newPosition);
     }
 
     /**
@@ -260,7 +260,7 @@ public final class Server implements Runnable {
             // removes player from clients vector
             clients.removeElementAt(index);
         }
-        System.out.println("Dissconected player " + username + " has index " + index);
+        System.out.println("Disconnected player " + username + " has index " + index);
 
         // search player in serializablePlayers
         index = 0;
@@ -338,17 +338,17 @@ public final class Server implements Runnable {
                                 // pop tokenId
                                 int tokenId = tokenIds.pop();
 
-                                // CREATE THE PLAYER, ADS TO clients
+                                // CREATES THE PLAYER, ADS TO clients
                                 clients.add(new Player(username, socket, objectInputStream, objectOutputStream));
 
-                                // send / set vital informations to / about client
+                                // send / set vital information to / about client
                                 Player currentPlayer = clients.lastElement();
                                 currentPlayer.sendMessage(MessageCodes.CONNECTION_ACCEPTED,"Connected. Wait for other clients!");
 
                                 currentPlayer.sendMessage(MessageCodes.TOKEN_ID, tokenId);
                                 currentPlayer.setToken(tokenId);
 
-                                // SOUT
+                                // CONSOLE
                                 System.out.println(username + " connected.");
                                 System.out.println("Token send to " + username + ": " + tokenId);
 
@@ -363,13 +363,13 @@ public final class Server implements Runnable {
                     else
                         rejectPlayer("Maximum connections reached!", socket, objectInputStream, objectOutputStream);
                 }catch (SocketException e){
-                    System.out.println("Unknown user disconected");
+                    System.out.println("Unknown user disconnected");
                 }catch (ClassNotFoundException e) {
                     System.out.println("Class not found exception.");
                     e.printStackTrace();
-                }catch (InvalidRequestedCode invalidRequstedCode) {
+                }catch (InvalidRequestedCode invalidRequestedCode) {
                     System.out.println("Invalid Requested Code");
-                    invalidRequstedCode.printStackTrace();
+                    invalidRequestedCode.printStackTrace();
                 }
             }
         }catch (IOException e) {
