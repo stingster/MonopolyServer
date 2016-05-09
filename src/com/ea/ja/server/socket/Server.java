@@ -176,18 +176,16 @@ public final class Server implements Runnable {
     synchronized public static void updateUserPostion(String username, int newPosition){
         System.out.println(username + " s-a mutat la pozitia " + newPosition);
         Vector<Thread> threads = new Vector<>();
-        for(Player player : clients){
-            if(!player.getUsername().equals(username)){
-                Thread sendThread = new Thread(() -> {
-                    try {
-                        player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username, newPosition));
-                    } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
-                        invalidRequestedCode.printStackTrace();
-                    }
-                });
-                threads.add(sendThread);
-            }
-        }
+        clients.stream().filter(player -> !player.getUsername().equals(username)).forEach(player -> {
+            Thread sendThread = new Thread(() -> {
+                try {
+                    player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username, newPosition));
+                } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
+                    invalidRequestedCode.printStackTrace();
+                }
+            });
+            threads.add(sendThread);
+        });
         threads.forEach(Thread::start);
     }
 
@@ -196,23 +194,31 @@ public final class Server implements Runnable {
      * @param username username of the dissconected client
      */
     synchronized public static void userDisconnected(String username){
+        // gets player's index in clients
         int index = 0;
         for(Player player : clients)
             if(!Objects.equals(player.getUsername(), username))
                 index++;
             else
                 break;
-        System.out.println("Dissconected player " + username + " has index " + index);
         if(index >= 0) {
             Player player = clients.elementAt(index);
+            // add the player's token back to the tokens stack
             tokenIds.add(player.getToken());
+
+            // closes player's resources
             try {
                 player.closeResources();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            // removes player from clients vector
             clients.removeElementAt(index);
         }
+        System.out.println("Dissconected player " + username + " has index " + index);
+
+        // search player in serializablePlayers
         index = 0;
         for(SerializablePlayer player : serializablePlayers)
             if(!Objects.equals(player.getUsername(), username))
@@ -220,8 +226,11 @@ public final class Server implements Runnable {
             else
                 break;
 
+        // removes vector from serializablePlayers, if it's present
         if(index >= 0 && serializablePlayers.size() != 0)
             serializablePlayers.removeElementAt(index);
+
+        // updates currentConnectedClients number
         currentConnectedClients--;
 
     }
@@ -232,8 +241,7 @@ public final class Server implements Runnable {
      * @return true | false
      */
     private boolean isUserConnected(String username){
-        int index = Collections.binarySearch(clients,new Player(username));
-        return index >= 0;
+        return Collections.binarySearch(clients,new Player(username)) >= 0;
     }
 
     /**
@@ -261,7 +269,6 @@ public final class Server implements Runnable {
         closeResources(socket,objectInputStream,objectOutputStream);
     }
 
-
     /**
      *
      * server thread run method
@@ -271,8 +278,9 @@ public final class Server implements Runnable {
         try {
             ServerSocket serverSocket = new ServerSocket(LISTENING_PORT);
             while (isRunning) {
-                System.out.println("Server listening for a new client");
+                System.out.println("Server listening for a new client...");
                 try {
+                    // creates the socket and gets credentials
                     Socket socket = serverSocket.accept();
                     ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
                     ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -281,14 +289,25 @@ public final class Server implements Runnable {
                     if (currentConnectedClients < requiredClients)
                         if(!isUserConnected(username))
                             if (Business.dao.logIn(username, password) != null) {
-                                System.out.println(username + " connected.");
+                                // pop tokenId
                                 int tokenId = tokenIds.pop();
-                                currentConnectedClients++;
-                                objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "Connected. Wait for other clients!"));
-                                objectOutputStream.writeObject(new Message(MessageCodes.TOKEN_ID, tokenId));
-                                System.out.println("TOKEN ID SENT TO " + username + ": " + tokenId);
+
+                                // CREATE THE PLAYER, ADS TO clients
                                 clients.add(new Player(username, socket, objectInputStream, objectOutputStream));
-                                clients.lastElement().setToken(tokenId);
+
+                                // send / set vital informations to / about client
+                                Player currentPlayer = clients.lastElement();
+                                currentPlayer.sendMessage(MessageCodes.CONNECTION_ACCEPTED,"Connected. Wait for other clients!");
+
+                                currentPlayer.sendMessage(MessageCodes.TOKEN_ID, tokenId);
+                                currentPlayer.setToken(tokenId);
+
+                                // SOUT
+                                System.out.println(username + " connected.");
+                                System.out.println("Token send to " + username + ": " + tokenId);
+
+                                // game ready to start check
+                                currentConnectedClients++;
                                 if (currentConnectedClients == requiredClients)
                                     startGame();
                             } else
