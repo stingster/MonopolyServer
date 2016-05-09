@@ -229,6 +229,20 @@ public final class Server implements Runnable {
         int index = Collections.binarySearch(clients,new Player(username));
         return index >= 0;
     }
+
+    /**
+     * closes clients resources
+     * @param socket socket ref
+     * @param objectInputStream in ref
+     * @param objectOutputStream out ref
+     * @throws IOException
+     */
+    private static void closeResources(Socket socket,ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream) throws IOException {
+        socket.close();
+        objectInputStream.close();
+        objectOutputStream.close();
+    }
+
     /**
      *
      * server thread run method
@@ -248,6 +262,7 @@ public final class Server implements Runnable {
                     if (currentConnectedClients < requiredClients)
                         if(!isUserConnected(username))
                             if (Business.dao.logIn(username, password) != null) {
+                                System.out.println(username + " connected.");
                                 int tokenId = tokenIds.pop();
                                 currentConnectedClients++;
                                 objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_ACCEPTED, "Connected. Wait for other clients!"));
@@ -255,27 +270,20 @@ public final class Server implements Runnable {
                                 System.out.println("TOKEN ID SENT TO " + username + ": " + tokenId);
                                 clients.add(new Player(username, socket, objectInputStream, objectOutputStream));
                                 clients.lastElement().setToken(tokenId);
-                                System.out.println(username + " connected.");
                                 if (currentConnectedClients == requiredClients)
                                     startGame();
                             } else {
                                 objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username / password invalid!"));
-                                objectInputStream.close();
-                                objectOutputStream.close();
+                                closeResources(socket,objectInputStream,objectOutputStream);
                                 System.out.println(username + " a incercat sa se conecteze cu parola gresita!");
-                                socket.close();
                             }
                         else{
                             objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Username is already connected!"));
-                            objectInputStream.close();
-                            objectOutputStream.close();
-                            socket.close();
+                            closeResources(socket,objectInputStream,objectOutputStream);
                         }
-                    else {
+                    else{
                         objectOutputStream.writeObject(new Message(MessageCodes.CONNECTION_REFUSED, "Maximum connexions reached."));
-                        objectInputStream.close();
-                        objectOutputStream.close();
-                        socket.close();
+                        closeResources(socket,objectInputStream,objectOutputStream);
                     }
                 }catch (SocketException e){
                     System.out.println("Unknown user disconected");
