@@ -162,6 +162,11 @@ public final class Player implements Runnable,Comparable<Player>{
     }
 
 
+    /**
+     * closes users resources
+     * @author achesnoiu
+     * @throws IOException
+     */
     public void closeResources() throws IOException {
         objectInputStream.close();
         objectOutputStream.close();
