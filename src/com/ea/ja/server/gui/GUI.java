@@ -1,13 +1,13 @@
 package com.ea.ja.server.gui;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.PrintStream;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.ea.ja.server.socket.Server;
@@ -15,33 +15,47 @@ import com.ea.ja.server.socket.Server;
 public class GUI extends JFrame{
 	
 	JComboBox requiredNoOfClients;
+	JTextArea console; 
 	JTextField port;
+	PrintStream out;
+	
 	String s;
 	int numberOfClients;
 	KeyAdapter adapter;
 	JButton start;
 	
 	public GUI (){
+		/**
+		 *  Title
+		 */
 		super("Server");		
 		
-		GridBagConstraints grid = new GridBagConstraints();
+		setLayout(null);
+		setSize(400,500);
 		
-		setLayout(new GridBagLayout());
-		setSize(380,150);
 		
+		/**
+		 * 		Creating elements
+		 */
+		JLabel portlb = new JLabel(" Port :   ");
 		port = new JTextField(6);
 		port.setText("8080");
 		
-	
+		JLabel clients = new JLabel(" Set minimum number of players  :   ");
 		Integer[] items = {2,3,4,5,6,7,8};
 		requiredNoOfClients = new JComboBox<>(items);
-		JLabel portlb = new JLabel(" Port :   ");
-		JLabel clients = new JLabel(" Set minimum number of players  :   ");
-		 start = new JButton(" Start server ");
+
+		
+		start = new JButton(" Start server ");
 		JButton stop = new JButton(" Stop server");
 		
+		console = new JTextArea();
+		out = new PrintStream( new TextAreaOutputStream( console ) );
+		System.setOut(out);
+		
+		
 		/**
-		 * Start Server 
+		 *		 Button Start Server 
 		 */
 		start.addActionListener(e -> {
             s=port.getText();
@@ -61,65 +75,53 @@ public class GUI extends JFrame{
                 e1.printStackTrace();
             }
             Server.startServer();
+            start.setEnabled(false);
         });
 		
 		/**
-		 * Stop Server
+		 *  	Button Stop Server
 		 */
 		stop.addActionListener(e -> Server.stopServer());
 		
 		
+		/**
+		 * 		Adding elements 
+		 */
+		add(portlb);
+		add(port);
+		add(clients);
+		add(requiredNoOfClients);
+		add(stop);
+		add(start);
+		add(console);
 		
 		
+		portlb.setBounds(180, -10, 100, 100);
+		port.setBounds(225, 30, 100, 20);
 		
-		// firt col
-		grid.anchor = GridBagConstraints.LINE_END;
-		grid.weightx = 0;
-		grid.weighty = 0.05;
-		grid.gridx=0;
-		grid.gridy =0;
-		add(portlb, grid);
+		clients.setBounds(20, 20, 230, 100);
+		requiredNoOfClients.setBounds(225,60, 100, 20);
 		
-		grid.gridx=0;
-		grid.gridy =1;
-		add(clients,grid);
+		stop.setBounds(75,90 ,115,30 );
+		start.setBounds(240,90 ,115,30 );
+		
+		console.setBounds(15,130,360,360 );
 		
 		
-		
-		// second col
-		grid.anchor = GridBagConstraints.LINE_START;
-		grid.weightx = 0.5;
-		grid.gridx=1;
-		grid.gridy =0;
-		add(port,grid);
-		
-		grid.gridx=1;
-		grid.gridy =1;
-		add(requiredNoOfClients, grid);
-		
-		//// buttons
-		grid.weighty =0.2;
-		grid.anchor = GridBagConstraints.CENTER;
-		grid.gridx =0;
-		grid.gridy =3;
-		add(stop,grid);
-		
-		
-		grid.anchor = GridBagConstraints.LINE_START;
-		
-		grid.gridx =1;
-		grid.gridy =3;
-		add(start,grid);
-		
-		
-//		
+		/**
+		 * 
+		 */
+		createAdapter();
+		port.addKeyListener(adapter);
 		this.setResizable(false);
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
-	
+	/**
+	 *  
+	 */
 	public void createAdapter(){
 			adapter = new KeyAdapter() {
 						public void keyReleased(KeyEvent e) {
@@ -132,3 +134,4 @@ public class GUI extends JFrame{
 	}
 
 }
+
