@@ -60,7 +60,7 @@ public final class Server implements Runnable {
      * @param requiredClients integer
      * @return integer
      */
-    private static native int getNextPlayer(int indexOfTheCurrentPlayerTurn,int requiredClients);
+    private static native int getNextPlayer(int indexOfTheCurrentPlayerTurn, int requiredClients);
 
     /**
      * native method to be called by Player when it's ready to start
