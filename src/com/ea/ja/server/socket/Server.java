@@ -31,20 +31,10 @@ public final class Server implements Runnable {
     private static int indexOfTheCurrentPlayerTurn;
     private static int currentConnectedClients;
     private static boolean isRunning;
-    private static int playersReadyToStart;
     private static Thread thread;
     private static Vector<Player> clients;
     private static Vector<SerializablePlayer> serializablePlayers;
     private static Stack<Integer> tokenIds;
-
-
-    /**
-     * native function to calculate next player
-     * @param indexOfTheCurrentPlayerTurn integer
-     * @param requiredClients integer
-     * @return integer
-     */
-    public static native int getNextPlayer(int indexOfTheCurrentPlayerTurn,int requiredClients);
 
 
     /**
@@ -56,7 +46,6 @@ public final class Server implements Runnable {
         indexOfTheCurrentPlayerTurn = 0;
         currentConnectedClients = 0;
         isRunning = false;
-        playersReadyToStart = 0;
         clients = new Vector<>();
         serializablePlayers = new Vector<>();
         tokenIds = new Stack<>();
@@ -66,24 +55,37 @@ public final class Server implements Runnable {
     }
 
     /**
+     * native function to calculate next player ID
+     * @param indexOfTheCurrentPlayerTurn integer
+     * @param requiredClients integer
+     * @return integer
+     */
+    private static native int getNextPlayer(int indexOfTheCurrentPlayerTurn,int requiredClients);
+
+    /**
+     * native method to be called by Player when it's ready to start
+     *  player is ready to start method
+     *  @see Player
+     */
+    synchronized public static native void playerReadyToStart();
+
+
+    /**
+     * method called by native function
+     * @return requires clients
+     */
+    private static int getRequiredClients(){
+        System.out.println("GET CALLED");
+        return requiredClients;
+    }
+
+
+    /**
      *
      * private constructor for respecting the
      * singleton pattern, preventing instantiation
      */
     private Server(){
-    }
-
-    /**
-     *  player is ready to start method
-     */
-    synchronized public static void playerReadyToStart(){
-        playersReadyToStart++;
-        if(playersReadyToStart == requiredClients) {
-            firstPlayerTurn();
-
-            // prepares for next game
-            playersReadyToStart = 0;
-        }
     }
 
 
@@ -147,8 +149,6 @@ public final class Server implements Runnable {
     synchronized public static void nextPlayerTurn(){
         System.out.println("NEXT PLAYER MOVE NOW");
         indexOfTheCurrentPlayerTurn = getNextPlayer(indexOfTheCurrentPlayerTurn,requiredClients);
-        //indexOfTheCurrentPlayerTurn++;
-        //indexOfTheCurrentPlayerTurn %= requiredClients;
         try {
             clients.elementAt(indexOfTheCurrentPlayerTurn).sendMessage(MessageCodes.YOUR_TURN);
         } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
