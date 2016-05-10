@@ -19,7 +19,7 @@ public interface DAO {
 	// UPDATE
 	Player move(String username, int initialPosition, int dice);
 	boolean resetBoard();
-
+	void logPlayer(String username);
 	
 	
 	// DELETE
