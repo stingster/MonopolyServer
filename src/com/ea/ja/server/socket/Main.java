@@ -8,9 +8,13 @@ import com.ea.ja.server.gui.GUI;
  */
 public class Main {
 
+    /**
+     * loading libraries
+     * @param args
+     */
     public static void main(String[] args){
 
-        // adaugat comentariu in main
+        System.loadLibrary("serverlib");
         new GUI();
     }
 }

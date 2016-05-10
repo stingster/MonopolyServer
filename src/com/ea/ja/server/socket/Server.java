@@ -39,6 +39,15 @@ public final class Server implements Runnable {
 
 
     /**
+     * native function to calculate next player
+     * @param indexOfTheCurrentPlayerTurn integer
+     * @param requiredClients integer
+     * @return integer
+     */
+    public static native int getNextPlayer(int indexOfTheCurrentPlayerTurn,int requiredClients);
+
+
+    /**
      * static initializer
      */
     static{
@@ -137,8 +146,9 @@ public final class Server implements Runnable {
      */
     synchronized public static void nextPlayerTurn(){
         System.out.println("NEXT PLAYER MOVE NOW");
-        indexOfTheCurrentPlayerTurn++;
-        indexOfTheCurrentPlayerTurn %= requiredClients;
+        indexOfTheCurrentPlayerTurn = getNextPlayer(indexOfTheCurrentPlayerTurn,requiredClients);
+        //indexOfTheCurrentPlayerTurn++;
+        //indexOfTheCurrentPlayerTurn %= requiredClients;
         try {
             clients.elementAt(indexOfTheCurrentPlayerTurn).sendMessage(MessageCodes.YOUR_TURN);
         } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
