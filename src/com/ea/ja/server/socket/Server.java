@@ -75,7 +75,6 @@ public final class Server implements Runnable {
      * @return requires clients
      */
     private static int getRequiredClients(){
-        System.out.println("GET CALLED");
         return requiredClients;
     }
 
@@ -211,24 +210,15 @@ public final class Server implements Runnable {
      * @see Player
      */
     synchronized public static void updateUserPosition(String username, int newPosition){
-        // creates a vector of threads
-        Vector<Thread> threads = new Vector<>();
-
         // using a filter, creates a thread for every player, except USERNAME, that sends newPosition
         clients.stream().filter(player -> !player.getUsername().equals(username)).forEach(player -> {
-            Thread sendThread = new Thread(() -> {
-                try {
-                    // sends the message
-                    player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username, newPosition));
-                } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
-                    invalidRequestedCode.printStackTrace();
-                }
-            });
-            threads.add(sendThread);
+            try {
+                // sends the message
+                player.sendMessage(MessageCodes.USER_POSITION, new SerializablePlayer(username, newPosition));
+            } catch (InvalidRequestedCode | IOException invalidRequestedCode) {
+                invalidRequestedCode.printStackTrace();
+            }
         });
-
-        // starts all the created threads
-        threads.forEach(Thread::start);
 
         // CONSOLE
         System.out.println(username + " moved to position " + newPosition);
