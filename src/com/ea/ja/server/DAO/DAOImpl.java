@@ -55,7 +55,7 @@ public class DAOImpl implements DAO {
 			e.printStackTrace();
 			return false;
 		} finally {
-			closeConnection();
+			closeResources();
 		}
 	}
 
@@ -84,7 +84,7 @@ public class DAOImpl implements DAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			closeConnection();
+			closeResources();
 		}
 		return null;
 	}
@@ -117,7 +117,7 @@ public class DAOImpl implements DAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			closeConnection();
+			closeResources();
 		}
 		return -1;
 	}
@@ -152,7 +152,7 @@ public class DAOImpl implements DAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			closeConnection();
+			closeResources();
 		}
 		return null;
 	}
@@ -175,7 +175,7 @@ public class DAOImpl implements DAO {
 		return false;
 	}
 
-	public void closeConnection() {
+	public void closeResources() {
 		try {
 			if (connection != null) {
 				connection.close();
