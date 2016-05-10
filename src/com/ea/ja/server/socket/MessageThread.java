@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 public interface MessageThread {
 
     static void sendOnAnotherThread(ObjectOutputStream objectOutputStream, Message message){
-        Thread thread = new Thread(()->{
+        Thread thread = new Thread(() -> {
             try {
                 objectOutputStream.writeObject(message);
             } catch (IOException e) {
