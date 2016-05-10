@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -53,6 +54,8 @@ public class GUI extends JFrame{
 		out = new PrintStream( new TextAreaOutputStream( console ) );
 		System.setOut(out);
 		
+		JScrollPane scroll = new JScrollPane(console);
+		
 		
 		/**
 		 *		 Button Start Server 
@@ -93,7 +96,8 @@ public class GUI extends JFrame{
 		add(requiredNoOfClients);
 		add(stop);
 		add(start);
-		add(console);
+		//add(console);
+		add(scroll);
 		
 		
 		portlb.setBounds(180, -10, 100, 100);
@@ -105,7 +109,8 @@ public class GUI extends JFrame{
 		stop.setBounds(75,90 ,115,30 );
 		start.setBounds(240,90 ,115,30 );
 		
-		console.setBounds(15,130,360,360 );
+		//console.setBounds(15,130,360,360 );
+		scroll.setBounds(15,130,360,325 );
 		
 		
 		/**
