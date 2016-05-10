@@ -4,13 +4,13 @@ package com.ea.ja.server.socket;
 import com.ea.ja.server.gui.GUI;
 
 /**
- * Created by achesnoiu on 4/28/2016.
+ * @author achesnoiu
  */
 public class Main {
 
     /**
      * loading libraries
-     * @param args
+     * @param args args
      */
     public static void main(String[] args){
 

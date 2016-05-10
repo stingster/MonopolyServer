@@ -4,6 +4,7 @@
     <JAVADOC />
     <NATIVE>
       <root url="file://$PROJECT_DIR$/Libraries" />
+      <root url="file://$USER_HOME$/Desktop/DLL/New folder" />
     </NATIVE>
     <SOURCES />
   </library>
