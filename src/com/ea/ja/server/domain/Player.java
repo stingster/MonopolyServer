@@ -180,14 +180,7 @@ public final class Player implements Runnable,Comparable<Player>{
      * @throws IOException
      */
     synchronized public void sendMessage(MessageCodes code) throws InvalidRequestedCode, IOException {
-		Thread thread = new Thread(() -> {
-            try {
-                objectOutputStream.writeObject(new Message(code));
-            } catch (IOException | InvalidRequestedCode e) {
-                e.printStackTrace();
-            }
-        });
-        thread.start();
+		MessageThread.sendOnAnotherThread(objectOutputStream,new Message(code));
     }
 
     /**
@@ -197,7 +190,7 @@ public final class Player implements Runnable,Comparable<Player>{
      * @throws IOException
      */
     synchronized public void sendMessage(MessageCodes code, Object serializedObject) throws InvalidRequestedCode, IOException {
-        objectOutputStream.writeObject(new Message(code, serializedObject));
+        MessageThread.sendOnAnotherThread(objectOutputStream,new Message(code, serializedObject));
     }
     /**
      * overloaded sendMessage functions
@@ -206,7 +199,7 @@ public final class Player implements Runnable,Comparable<Player>{
      * @throws IOException
      */
     synchronized public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2) throws InvalidRequestedCode, IOException {
-        objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2));
+        MessageThread.sendOnAnotherThread(objectOutputStream,new Message(code, serializedObject, serializedObject2));
     }
 
     /**
@@ -216,7 +209,7 @@ public final class Player implements Runnable,Comparable<Player>{
      * @throws IOException
      */
     synchronized public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2, Object serializedObject3) throws InvalidRequestedCode, IOException {
-        objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2, serializedObject3));
+        MessageThread.sendOnAnotherThread(objectOutputStream,new Message(code, serializedObject, serializedObject2,serializedObject3));
     }
 
     /**
@@ -226,7 +219,7 @@ public final class Player implements Runnable,Comparable<Player>{
      * @throws IOException
      */
     synchronized public void sendMessage(MessageCodes code, Object serializedObject,Object serializedObject2, Object serializedObject3, Object serializedObject4) throws InvalidRequestedCode, IOException {
-        objectOutputStream.writeObject(new Message(code, serializedObject, serializedObject2, serializedObject3, serializedObject4));
+        MessageThread.sendOnAnotherThread(objectOutputStream,new Message(code, serializedObject, serializedObject2,serializedObject3,serializedObject4));
     }
 
 

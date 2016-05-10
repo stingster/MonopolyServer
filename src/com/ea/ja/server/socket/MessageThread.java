@@ -1,6 +1,4 @@
-package com.ea.ja.server.domain;
-
-import com.ea.ja.server.socket.Message;
+package com.ea.ja.server.socket;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

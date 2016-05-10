@@ -1,9 +1,6 @@
 package com.ea.ja.server.socket;
 
 
-import com.ea.ja.server.domain.MessageThread;
-import com.ea.ja.server.gui.GUI;
-
 /**
  * @author achesnoiu
  */
